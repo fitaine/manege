@@ -13,6 +13,7 @@ Open-source automated photography system combining Raspberry Pi camera with ESP3
 ## Features
 
 - 360° photo sequences & videos
+- Continuous Live Stream
 - Manual focus/exposure/white balance
 - HDR capture mode
 - Precision turntable (0.005625°/step)
