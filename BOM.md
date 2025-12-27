@@ -2,127 +2,181 @@
 
 Complete parts list for building Manège automated photobox.
 
+**Source:** All parts available on AliExpress
+
 ---
 
-## Electronics
+## Core Electronics
 
-| Component | Specs | Qty | Est. Price | Notes |
-|-----------|-------|-----|------------|-------|
-| **Raspberry Pi 4/5** | 4GB+ RAM recommended | 1 | €60-80 | Main controller |
-| **Pi Camera Module V3** | 11.9MP, autofocus | 1 | €25-30 | Critical: V3 required |
-| **Camera Cable** | 15-pin ribbon cable | 1 | €3-5 | Usually included with camera |
-| **ESP32 DevKit** | WiFi enabled | 1 | €8-12 | Turntable controller |
-| **NEMA 17 Stepper** | 200 steps/rev, 1.8° | 1 | €15-20 | Turntable motor |
-| **DRV8825 Driver** | With heatsink | 1 | €3-5 | Stepper driver (1/32 microstepping) |
-| **12V Power Supply** | 2-3A minimum | 1 | €10-15 | For motor + ESP32 |
-| **5V Power Supply** | 3A (USB-C) | 1 | €10-15 | For Raspberry Pi |
+| Component | Specs | Qty | Notes |
+|-----------|-------|-----|-------|
+| **Raspberry Pi 5** | 4GB+ RAM | 1 | Supports 2 cameras simultaneously |
+| **Pi Camera HQ** | 12.3MP, C/CS mount | 1 | Main capture camera (high quality) |
+| **Pi Camera Module V3** | 11.9MP, autofocus | 1 | Live preview stream |
+| **Camera Cables** | 15-pin ribbon cables | 2 | One for each camera |
+| **ESP32 DevKit** | WiFi enabled | 1 | Turntable controller |
+| **NEMA 17 Stepper** | 200 steps/rev, 1.8° | 1 | Turntable motor |
+| **DRV8825 Driver** | With heatsink | 1 | Stepper driver (1/32 microstepping) |
 
-**Electronics Subtotal:** ~€134-182
+---
+
+## Power System
+
+| Component | Specs | Qty | Notes |
+|-----------|-------|-----|-------|
+| **XH-M291** | 12V Buck converter | 1 | 12V power distribution |
+| **LM2596** | 5V Buck converter | 1 | 5V for Raspberry Pi |
+| **12V Power Supply** | 2-3A minimum | 1 | Main power input |
 
 ---
 
 ## Mechanical
 
-| Component | Specs | Qty | Est. Price | Notes |
-|-----------|-------|-----|------------|-------|
-| **Turntable Platform** | Ø300mm rotating base | 1 | €20-40 | DIY or purchased |
-| **Timing Belt & Pulleys** | 10:1 ratio (160T/16T) | 1 set | €15-25 | For gear reduction |
-| **Bearings** | For turntable rotation | 2-4 | €5-10 | Depends on design |
-| **Mounting Hardware** | Screws, brackets | 1 set | €5-10 | M3/M4 hardware |
-
-**Mechanical Subtotal:** ~€45-85
+| Component | Specs | Qty | Notes |
+|-----------|-------|-----|-------|
+| **Lazy Susan** | 8 inch (200mm) | 1 | Rotating bearing platform |
+| **Timing Belt & Pulleys** | 10:1 ratio (160T/16T) | 1 set | Gear reduction |
+| **Mounting Hardware** | M3/M4 screws, brackets | 1 set | Assembly hardware |
 
 ---
 
 ## Wiring & Connectors
 
-| Component | Qty | Est. Price | Notes |
-|-----------|-----|------------|-------|
-| **Jumper Wires** | 20-30 | €5-8 | Male-to-female, various colors |
-| **Breadboard** (optional) | 1 | €3-5 | For prototyping |
-| **Heat Shrink Tubing** | Assortment | €3-5 | Cable management |
-
-**Wiring Subtotal:** ~€11-18
+| Component | Qty | Notes |
+|-----------|-----|-------|
+| **Jumper Wires** | 20-30 | Male-to-female, various colors |
+| **Heat Shrink Tubing** | Assortment | Cable management |
+| **Breadboard** (optional) | 1 | For prototyping/testing |
 
 ---
 
-## Optional/Future
+## Optional Upgrades
 
-| Component | Purpose | Est. Price |
-|-----------|---------|------------|
-| **LED Strips** (8x) | Product lighting | €24-40 |
-| **MOSFET (IRLZ44N)** | LED control | €0.50 |
-| **Buck Converter** | 12V → 5V for ESP32 | €3-5 |
-| **Enclosure** | Protective housing | €20-50 |
-| **3D Printed Parts** | Custom mounts, case | €10-20 (filament) |
-
-**Optional Subtotal:** ~€58-115
+| Component | Purpose | Notes |
+|-----------|---------|-------|
+| **LED Strips** (8x) | Product lighting | 12V COB strips |
+| **IRLZ44N MOSFET** | LED PWM control | Logic-level N-channel |
+| **Resistors** | 1kΩ, 10kΩ | For MOSFET circuit |
+| **Enclosure Materials** | Protective housing | 3D printed or fabricated |
 
 ---
 
-## Total Project Cost
+## Camera Setup - Two Camera System
 
-| Category | Cost Range |
-|----------|------------|
-| **Core Electronics** | €134-182 |
-| **Mechanical** | €45-85 |
-| **Wiring** | €11-18 |
-| **Subtotal (Minimum Working System)** | **€190-285** |
-| **+ Optional (Full Featured)** | €248-400 |
+### Why Two Cameras?
+
+**Camera HQ (Main Capture):**
+- High quality photos (12.3MP)
+- Interchangeable C/CS lenses
+- Manual focus control
+- RAW capture support
+- Used for: Final 360° photos, product shots
+
+**Camera Module V3 (Live Preview):**
+- Fast autofocus
+- Good for live streaming
+- Lower latency
+- Used for: Real-time preview, composition, framing
+
+### Raspberry Pi 5 Requirement
+
+Pi 5 has **dual camera connectors** - allows both cameras simultaneously:
+- Camera HQ on CSI-0 (main photos)
+- Module V3 on CSI-1 (live preview)
+
+Earlier Pi models (4, 3, etc.) require camera multiplexer for dual cameras.
 
 ---
 
-## Where to Buy
+## Power Distribution
 
-**Electronics:**
-- AliExpress (cheapest, 2-4 weeks shipping)
-- Amazon (faster, slightly more expensive)
-- Local electronics shops (immediate, higher prices)
-
-**Raspberry Pi & Camera:**
-- Official distributors (Farnell, RS Components, Adafruit)
-- Ensure Camera Module V3 (not V1 or V2\!)
-
-**Mechanical:**
-- Timing belts: AliExpress, robotics suppliers
-- Bearings: Local hardware stores, Amazon
-- Turntable: DIY from wood/acrylic or purchase lazy susan bearing
+```
+12V Power Supply
+    │
+    ├──> XH-M291 (12V distribution)
+    │       ├──> NEMA 17 Stepper Motor
+    │       ├──> LED Strips (optional)
+    │       └──> LM2596 (12V → 5V)
+    │               └──> Raspberry Pi 5
+    │
+    └──> ESP32 (via LM2596 or dedicated 5V)
+```
 
 ---
 
 ## Critical Notes
 
-⚠️ **Camera Module V3 is required** - V1/V2 will NOT work (different software)  
+⚠️ **Raspberry Pi 5 required** for dual camera setup (or use multiplexer with Pi 4)  
+⚠️ **Camera HQ needs lens** - C or CS mount (6mm or 16mm recommended)  
 ⚠️ **DRV8825 needs heatsink** - Gets hot during operation  
-⚠️ **12V power must be adequate** - Minimum 2A for motor under load  
-⚠️ **ESP32 needs WiFi** - Generic ESP32 DevKit works fine
+⚠️ **Power calculations** - Ensure 12V supply can handle motor + LEDs  
+⚠️ **Camera cables** - Check length needed for your enclosure
 
 ---
 
-## What You Already Have
+## Assembly Order
 
-If you have these, you can save money:
-- Old 12V laptop power supply
-- USB-C phone charger (5V 3A)
-- Jumper wires from Arduino kits
-- Breadboard for testing
+**Recommended build sequence:**
+
+1. **Electronics breadboard test**
+   - Wire ESP32 + DRV8825 + motor
+   - Test basic rotation
+   - Verify power supply voltages
+
+2. **Raspberry Pi setup**
+   - Install Pi OS
+   - Connect both cameras
+   - Test camera detection
+   - Install libcamera-apps
+
+3. **Mechanical assembly**
+   - Mount motor to base
+   - Install lazy susan bearing
+   - Add timing belt/pulleys
+   - Test rotation smoothness
+
+4. **Software setup**
+   - Clone Manège repository
+   - Configure network settings
+   - Upload ESP32 firmware
+   - Test web interface
+
+5. **Final integration**
+   - Mount cameras
+   - Wire everything neatly
+   - Add enclosure (optional)
+   - Calibrate and test
 
 ---
 
-## Recommended First Purchase
+## Where to Buy
 
-Start with essentials:
-1. Raspberry Pi 4 (4GB)
-2. Pi Camera Module V3
-3. ESP32 DevKit
-4. NEMA 17 stepper
-5. DRV8825 driver
+**Primary Source:** AliExpress
+- Search terms: "Raspberry Pi 5", "NEMA 17", "DRV8825", "8 inch lazy susan"
+- Typical shipping: 2-4 weeks
+- Buy extras: jumper wires, heat shrink, screws
 
-**Minimum to test:** ~€120-140
+**Camera-Specific:**
+- Pi Camera HQ + lens: Official distributors or AliExpress
+- Ensure genuine Camera Module V3 (many clones exist)
 
-Add mechanical parts once electronics are working.
+**Power Components:**
+- XH-M291: Search "XH-M291 buck converter"
+- LM2596: Search "LM2596 DC-DC buck"
+- 12V adapter: "12V 3A power supply"
 
 ---
 
-**Last Updated:** December 2025  
-**Currency:** EUR (adjust for your region)
+## What You Might Already Have
+
+Check your parts bin for:
+- Jumper wires (Arduino kits)
+- Breadboard
+- USB cables
+- Heat shrink tubing
+- Basic hand tools
+- Multimeter (for testing voltages)
+
+---
+
+**Last Updated:** December 2025
