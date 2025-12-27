@@ -54,8 +54,8 @@ Your photobox is a complete automated photography system for capturing basketry 
 - **Camera**: Raspberry Pi Camera Module V3 NoIR
 - **Resolution**: 1920×1080 for video, configurable for photos
 - **Network**:
-  - Flask app: 192.168.2.5:5000
-  - ESP32 turntable: 192.168.1.42 (update if needed)
+  - Flask app: <PI_IP_ADDRESS>:5000
+  - ESP32 turntable: <ESP32_IP_ADDRESS> (update if needed)
 - **Photo storage**: `/home/florine/Pictures/` with date-organized folders
 
 ---
@@ -125,7 +125,7 @@ Your photobox is a complete automated photography system for capturing basketry 
                    │ HTTP
                    ↓
 ┌─────────────────────────────────────────────────┐
-│  Raspberry Pi (192.168.2.5:5000)                │
+│  Raspberry Pi (<PI_IP_ADDRESS>:5000)                │
 │  ┌───────────────────────────────────────────┐  │
 │  │ Flask App (Python)                        │  │
 │  │ - Serves web UI                           │  │
@@ -144,7 +144,7 @@ Your photobox is a complete automated photography system for capturing basketry 
                    │ HTTP
                    ↓
 ┌─────────────────────────────────────────────────┐
-│  ESP32 (192.168.1.42)                           │
+│  ESP32 (<ESP32_IP_ADDRESS>)                           │
 │  ┌───────────────────────────────────────────┐  │
 │  │ HTTP Server (C++)                         │  │
 │  │ - AccelStepper control                    │  │
@@ -278,9 +278,9 @@ ESP32 Pins → DRV8825:
   M2:   GPIO 19 (HIGH for 1/32 microstepping)
 
 Network:
-  WiFi SSID: WiFi
-  Password: lecodewifi
-  Static IP: 192.168.1.42
+  WiFi SSID: YourWiFiName
+  Password: YourWiFiPassword
+  Static IP: <ESP32_IP_ADDRESS>
 
 Motor Configuration:
   Steps per revolution: 200 (NEMA 17)
@@ -526,7 +526,7 @@ preposition_time = 2.0       # Adjust if needed
 |---------|----------|
 | Camera not detected | Check ribbon cable, run `vcgencmd get_camera` |
 | Live feed not loading | Emergency Stop, wait 2s, refresh page |
-| Turntable shows "Offline" | Check ESP32 power, WiFi, verify IP 192.168.1.42 |
+| Turntable shows "Offline" | Check ESP32 power, WiFi, verify IP <ESP32_IP_ADDRESS> |
 | Motor not moving | Verify wiring, check VMOT voltage, test with `/status` |
 | Jerky rotation | Upload latest firmware with 1/32 microstepping |
 | Photos not in thumbnails | Click thumbnails tab, check `/home/florine/Pictures/` |
@@ -568,10 +568,10 @@ sudo systemctl restart photobox
 ### ESP32
 ```bash
 # Test ESP32 connectivity
-curl http://192.168.1.42/status
+curl http://<ESP32_IP_ADDRESS>/status
 
 # Test rotation
-curl -X POST http://192.168.1.42/preset/45
+curl -X POST http://<ESP32_IP_ADDRESS>/preset/45
 ```
 
 ### Photos
