@@ -127,6 +127,9 @@ Manège automatically uploads your photos as you shoot them, building a beautifu
 
 Perfect for artisans who want to keep their online catalogue updated without the hassle.
 
+![WordPress Gallery Grid View](app/static/images/wordpress-gallery-grid.png)
+*Example of a WordPress gallery showcasing a craftsman's complete basket catalogue - clean grid layout for easy browsing*
+
 ---
 
 ## 💪 Built for Real Work
