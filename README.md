@@ -69,7 +69,8 @@ Build a visual archive of everything you create with automatic organization and 
 
 ### Essential Hardware
 - Raspberry Pi 5 (16GB recommended)
-- 2x Camera Module 3 (or Camera Module 3 Wide)
+- 1 Raspberry Camera Module 3
+- 1 Raspberry HQ camera
 - PoE+ HAT for Raspberry Pi 5
 - ESP32 development board
 - NEMA 17 stepper motor + A4988 driver
