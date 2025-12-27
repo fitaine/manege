@@ -62,6 +62,9 @@ Build a visual archive of everything you create with automatic organization and 
 - **Fast & Responsive** - Lightweight interface that works on phones, tablets, and computers
 - **Open Source** - Customize everything to match your workflow
 
+![Manège Web App Interface](app/static/images/manege-web-app.jpg)
+*The Manège web interface - intuitive controls for live preview, manual camera settings, and automated 360° capture*
+
 ---
 
 ## 🛠️ Perfect For
