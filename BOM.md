@@ -10,7 +10,7 @@ Complete parts list for building Manège automated photobox.
 
 | Component | Specs | Qty | Notes |
 |-----------|-------|-----|-------|
-| **Raspberry Pi 5** | 4GB+ RAM | 1 | Supports 2 cameras simultaneously |
+| **Raspberry Pi 5** | 16GB RAM | 1 | Supports 2 cameras simultaneously |
 | **Pi Camera HQ** | 12.3MP, C/CS mount | 1 | Main capture camera (high quality) |
 | **Pi Camera Module V3** | 11.9MP, autofocus | 1 | Live preview stream |
 | **Camera Cables** | 15-pin ribbon cables | 2 | One for each camera |
