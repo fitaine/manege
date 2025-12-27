@@ -1,5 +1,5 @@
 ╔═══════════════════════════════════════════════════════════════════════╗
-║           PHOTOBOX TURNTABLE - QUICK WIRING REFERENCE                 ║
+║           MANÈGE - QUICK WIRING REFERENCE                 ║
 ╚═══════════════════════════════════════════════════════════════════════╝
 
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -87,11 +87,11 @@
 
   Device              IP Address         Port    Protocol
   ───────────────────────────────────────────────────────────
-  Raspberry Pi        192.168.2.5        5000    HTTP (Flask)
-  ESP32 Turntable     192.168.1.42       80      HTTP (WebServer)
+  Raspberry Pi        <PI_IP_ADDRESS>        5000    HTTP (Flask)
+  ESP32 Turntable     <ESP32_IP_ADDRESS>       80      HTTP (WebServer)
 
-  WiFi SSID:     WiFi
-  WiFi Password: lecodewifi
+  WiFi SSID:     YourWiFiName
+  WiFi Password: YourWiFiPassword
 
 ┌─────────────────────────────────────────────────────────────────────┐
 │  TESTING CHECKLIST                                                  │
@@ -108,7 +108,7 @@
   □ 9. Set M0, M1, M2 to GND (full step mode)
   □ 10. Upload firmware to ESP32 (via USB)
   □ 11. Open Serial Monitor, verify WiFi connection
-  □ 12. Test via browser: http://192.168.1.42
+  □ 12. Test via browser: http://<ESP32_IP_ADDRESS>
   □ 13. Test rotation: /preset/45
   □ 14. Test Flask integration from photobox UI
 
