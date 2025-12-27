@@ -16,8 +16,7 @@ Manège is the complete open-source photography system that serious makers and a
 - 🎥 **Dual Camera System** - Raspberry Pi 5 with dual camera support for simultaneous HQ capture + continuous live streaming
 - 🔌 **True One-Cable Solution** - PoE HAT powers everything: Pi, cameras, LED lighting, and turntable from a single Ethernet cable
 - 💡 **Integrated LED Control** - Built-in power management for your LED light strips - one power source for the entire system
-- 🌀 **Professional Turntable** - 8-inch lazy susan supports large objects with precision rotation (64,000 steps per revolution!)
-- 🌬️ **Honeygrid Ventilation** - Smart thermal design keeps your Pi cool during long shooting sessions
+- 🌀 **Professional Turntable** - 8-inch lazy susan supports large objects with precision rotation
 - 🌐 **WordPress Auto-Upload** - Your photos automatically appear in your online gallery as you shoot
 - 📱 **Lightweight Web App** - Control everything from any device - fast, responsive, and functional
 
@@ -51,9 +50,8 @@ Build a visual archive of everything you create with automatic organization and 
 ### Hardware Excellence
 - **8-inch Turntable** - Handles everything from jewelry to furniture
 - **Ultra-Precise Motion** - 0.005625° per step for silky-smooth rotation
-- **PoE Powered** - Just plug in one Ethernet cable - power + network in one
+- **PoE Powered** - Just plug in one Ethernet cable = power + data
 - **Integrated LED Power** - Dedicated power rail for your lighting setup
-- **Passive Cooling** - Honeygrid vents keep the system running cool and silent
 
 ### Software & Workflow
 - **WordPress Integration** - Auto-upload to your website gallery as you shoot
@@ -67,33 +65,22 @@ Build a visual archive of everything you create with automatic organization and 
 
 ---
 
-## 🛠️ Perfect For
-
-- **Woodworkers** - Showcase custom furniture and turning projects
-- **Ceramicists** - Capture the full beauty of your pottery
-- **Jewelers** - Professional shots that highlight intricate details
-- **Leatherworkers** - Show every angle of bags, wallets, and accessories
-- **Sculptors** - Document your work from every perspective
-- **Vintage Dealers** - Photograph inventory fast with consistent quality
-- **Any Maker** - If you create physical products, Manège is for you
-
----
-
 ## 📦 What You Need
 
 ### Essential Hardware
-- Raspberry Pi 5 (4GB+ recommended)
+- Raspberry Pi 5 (16GB recommended)
 - 2x Camera Module 3 (or Camera Module 3 Wide)
 - PoE+ HAT for Raspberry Pi 5
 - ESP32 development board
 - NEMA 17 stepper motor + A4988 driver
 - 8-inch lazy susan bearing
 - Power supply for LED strip (if using integrated lighting)
+- Ethernet switch with PoE+ support
 
 ### Optional But Recommended
 - LED light strips for consistent product lighting
 - Enclosure with honeygrid ventilation (STL files included)
-- Ethernet switch with PoE+ support
+
 
 **Full BOM with suppliers: [BOM.md](BOM.md)**
 
@@ -138,7 +125,7 @@ Manège automatically uploads your photos as you shoot them, building a beautifu
 - **No Manual Transfers** - Set it up once, never touch it again
 - **Custom Organization** - Tag and categorize as you shoot
 
-Perfect for artisans who want to keep their online store updated without the hassle.
+Perfect for artisans who want to keep their online catalogue updated without the hassle.
 
 ---
 
