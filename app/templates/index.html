@@ -1,0 +1,3088 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>photobox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,400;0,600;1,700&display=swap" rel="stylesheet">
+  <link href="https://raw.githubusercontent.com/fxaeberhard/handdrawn.css/master/handdrawn.min.css" rel="stylesheet">
+<style>
+/* ======= Your original CSS (kept) ======= */
+:root {
+  --background-dark: #0a0a0a;
+  --panel-dark: #121212;
+  --panel-light: #1a1a1a;
+  --accent-green: #15748e;
+  --accent-orange: #421042;
+  --accent-yellow: #421042;
+  --text-light: #e6e4d9;
+  --border-light: #1cd1ec;
+  --highlight: #e833af;
+  --button-green-bg: var(--accent-green);
+  --button-green-border: var(--border-light);
+  --button-green-hover: var(--border-light);
+  --button-orange-bg: var(--accent-orange);
+  --button-orange-border: var(--highlight);
+  --button-orange-hover: var(--highlight);
+  --overlay-dark: rgba(0, 0, 0, 0.5);
+  --modal-overlay: rgba(0, 0, 0, 0.85);
+  --modal-shadow: #b8863f;
+  --modal-text: #fefae0;
+  --arrow-bg: rgba(0, 0, 0, 0.5);
+  --arrow-hover-bg: rgba(0, 0, 0, 0.8);
+  --carousel-gradient-start: #1c1c1c;
+  --carousel-gradient-mid: #2a2a2a;
+  --carousel-gradient-end: #1c1c1c;
+  --switch-bg-start: #a0a0a0;
+  --switch-bg-end: #d1d1d1;
+  --slider-bg-start: #f0f0f0;
+  --slider-bg-end: #c0c0c0;
+  --slider-checked-bg-start: #b0b0b0;
+  --slider-checked-bg-end: #8f8f8f;
+  --shadow-light: #ffffff90;
+  --shadow-dark: #7a7a7a90;
+  --slider-shadow-light: #ffffff;
+  --slider-shadow-dark: #a9a9a9;
+  --switch-label-inactive: #7a7a7a;
+  --switch-label-auto-active: #2a2a2a;
+  --switch-label-manual-active: #8c4f1e;
+
+  /* WB Section - Yellow/Green theme */
+  --wb-accent: #8bb818;
+  --wb-border: #a8e81f;
+  --wb-hover: #6bcc32;
+}
+
+button:focus { outline: none; }
+* { box-sizing: border-box; }
+
+/* Handdrawn link styles with custom underline on hover */
+a {
+  color: var(--border-light);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--highlight);
+}
+
+/* Dark mode scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--panel-light) var(--background-dark);
+}
+
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--background-dark);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--panel-light);
+  border-radius: 6px;
+  border: 2px solid var(--background-dark);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #2a2a2a;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  background-color: var(--background-dark);
+  color: var(--text-light);
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 700;
+  font-style: italic;
+  text-align: left;
+  padding: 1rem 1rem 1rem 2rem;
+  background-color: var(--panel-light);
+  font-size: 2rem;
+  color: var(--text-light);
+  border-bottom: 3px solid var(--background-dark);
+}
+
+main {
+  display: flex;
+  flex: 1;
+  height: calc(100% - 110px);
+  overflow: hidden;
+}
+
+.side-panel {
+  width: 20%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 1rem;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), var(--panel-light) 50%, rgba(0, 0, 0, 0.4));
+  box-shadow: inset 0 6px 10px rgba(0, 0, 0, 0.4),
+              inset 0 -6px 10px rgba(0, 0, 0, 0.4);
+  overflow-y: auto;
+}
+
+.left-panel button,
+.right-panel button {
+  width: 70%;
+  align-self: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+  border-radius: 999px;
+  border: 2px solid;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.left-panel button { background-color: var(--button-green-bg); color: var(--text-light); border-color: var(--button-green-border); }
+.left-panel button:hover { background-color: var(--button-green-hover); transform: scale(1.03); }
+
+.right-panel button { background-color: var(--button-orange-bg); color: var(--text-light); border-color: var(--button-orange-border); }
+.right-panel button:hover { background-color: var(--button-orange-hover); transform: scale(1.03); }
+
+.stream-container {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: var(--panel-dark);
+  padding-top: 1rem;
+}
+
+.stream-container img {
+  max-height: 90vh;
+  max-width: 97%;
+  border: 3px solid var(--background-dark);
+  border-radius: 6px;
+  box-shadow: 0 0 15px var(--overlay-dark);
+  object-fit: contain;
+  margin-bottom: 1rem;
+  z-index: 1;
+}
+
+/* Camera Settings Display - Horizontal below video */
+.camera-settings {
+  background-color: var(--panel-light);
+  border: 2px solid var(--panel-dark);
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  margin-top: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.camera-settings .settings-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-light);
+  opacity: 0.7;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.camera-settings .settings-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.camera-settings .settings-label {
+  color: var(--text-light);
+  opacity: 0.8;
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+.camera-settings .settings-value {
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.camera-settings.error {
+  border-color: #cc3333;
+}
+
+.camera-settings.error .settings-title {
+  color: #cc3333;
+}
+
+.stream-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 2;
+  background-color: var(--overlay-dark);
+  color: var(--accent-yellow);
+  font-size: 2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.photo-carousel img { height: 80px; border-radius: 6px; cursor: pointer; transition: transform 0.2s ease; }
+.photo-carousel img:hover { transform: scale(1.1); box-shadow: 0 0 8px var(--accent-yellow); }
+
+.photo-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--modal-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.photo-modal img, .photo-modal video {
+  width: 83vw;
+  height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 0 20px var(--modal-shadow);
+  transition: filter 0.3s ease;
+}
+
+.modal-close {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  font-size: 3rem;
+  color: var(--modal-text);
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  z-index: 1100;
+}
+
+.modal-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 3rem;
+  color: var(--modal-text);
+  cursor: pointer;
+  user-select: none;
+  z-index: 1101;
+  padding: 0.2rem 0.5rem;
+  background: var(--arrow-bg);
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.modal-arrow:hover { background: var(--arrow-hover-bg); }
+#modal-prev { left: 20px; }
+#modal-next { right: 20px; }
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  background: var(--arrow-bg);
+  color: var(--text-light);
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+  user-select: none;
+  z-index: 150;
+  transition: background-color 0.3s ease;
+}
+#carousel-left { left: 10px; }
+#carousel-right { right: 10px; }
+.carousel-arrow:hover { background: var(--arrow-hover-bg); }
+
+#exposure-control, #focus-control { color: var(--text-light); user-select: none; }
+.exposure-carousels { display: flex; justify-content: center; gap: 2rem; margin: 0 auto; max-width: 280px; }
+.focus-carousel-container { display: flex; justify-content: center; margin-top: 1rem; }
+
+.carousel-container { position: relative; width: 70px; height: 180px; background: linear-gradient(to bottom, var(--carousel-gradient-start), var(--carousel-gradient-mid), var(--carousel-gradient-end)); border: 2px solid var(--border-light); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; align-items: center; font-family: 'Nunito Sans', sans-serif; box-shadow: inset 0 6px 10px var(--overlay-dark), inset 0 -6px 10px var(--overlay-dark); transition: filter 0.3s ease, opacity 0.3s ease; }
+
+.carousel-list { margin: 0; padding: 0; list-style: none; overflow-y: scroll; scrollbar-width: none; -ms-overflow-style: none; flex: 1; scroll-snap-type: y mandatory; }
+.carousel-list::-webkit-scrollbar { display: none; }
+.carousel-list li { scroll-snap-align: center; height: 40px; line-height: 40px; text-align: center; font-weight: 600; font-size: 1rem; color: #8b4a8b; cursor: pointer; user-select: none; }
+.carousel-list li.selected { color: var(--text-light); font-weight: 700; }
+
+.ticker { position: absolute; top: 50%; left: 0; right: 0; height: 40px; margin-top: -20px; border-top: 2px solid red; border-bottom: 2px solid red; pointer-events: none; }
+
+/* Horizontal carousel styles */
+.carousel-container.horizontal { width: 280px; height: 50px; flex-direction: row; background: linear-gradient(to right, var(--carousel-gradient-start), var(--carousel-gradient-mid), var(--carousel-gradient-end)); box-shadow: inset 6px 0 10px var(--overlay-dark), inset -6px 0 10px var(--overlay-dark); }
+.carousel-container.horizontal .carousel-list { overflow-x: scroll; overflow-y: hidden; scroll-snap-type: x mandatory; display: flex; flex-direction: row; width: 100%; height: 100%; align-items: center; }
+.carousel-container.horizontal .carousel-list li { width: 80px; min-width: 80px; height: 100%; line-height: 50px; scroll-snap-align: center; }
+.carousel-container.horizontal .ticker { top: 0; bottom: 0; left: 50%; width: 80px; height: auto; margin-left: -40px; margin-top: 0; border-left: 2px solid red; border-right: 2px solid red; border-top: none; border-bottom: none; }
+.carousel-container.horizontal .carousel-top-label { position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); padding: 0; writing-mode: horizontal-tb; }
+.carousel-container.horizontal .label { position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); padding: 0; writing-mode: horizontal-tb; }
+.label { font-size: 0.8rem; padding: 0.3rem 0; color: var(--accent-yellow); user-select: none; }
+.carousel-top-label { font-size: 0.75rem; padding: 0.2rem 0; color: var(--text-light); user-select: none; font-weight: 600; text-transform: uppercase; }
+
+.switch { position: relative; display: inline-block; width: 140px; height: 40px; background: linear-gradient(145deg, var(--switch-bg-start), var(--switch-bg-end)); border-radius: 20px; box-shadow: inset 2px 2px 4px var(--shadow-light), inset -2px -2px 4px var(--shadow-dark); cursor: pointer; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; top: 4px; left: 4px; width: 60px; height: 32px; background: linear-gradient(145deg, var(--slider-bg-start), var(--slider-bg-end)); border-radius: 16px; box-shadow: 2px 2px 4px var(--slider-shadow-dark), -2px -2px 4px var(--slider-shadow-light); transition: 0.3s; }
+.toggle-switch { position: relative; width: 140px; height: 40px; display: inline-block; }
+.toggle-label { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%; background: linear-gradient(145deg, var(--switch-bg-start), var(--switch-bg-end)); border-radius: 20px; position: relative; cursor: pointer; box-shadow: inset 2px 2px 4px var(--shadow-light), inset -2px -2px 4px var(--shadow-dark); font-weight: 700; font-size: 1rem; color: var(--switch-label-inactive); user-select: none; overflow: hidden; }
+.toggle-text { position: relative; z-index: 2; width: 50%; text-align: center; transition: color 0.3s ease; }
+.toggle-slider { position: absolute; top: 4px; left: 4px; width: calc(50% - 8px); height: 32px; border-radius: 16px; background: linear-gradient(145deg, var(--slider-bg-start), var(--slider-bg-end)); box-shadow: 2px 2px 4px var(--slider-shadow-dark), -2px -2px 4px var(--slider-shadow-light); transition: all 0.3s ease; z-index: 1; }
+
+.power-button {
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  min-height: 60px;
+  max-width: 60px;
+  max-height: 60px;
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+  background-color: var(--button-orange-bg);
+  color: var(--text-light);
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  padding: 0;
+  flex-shrink: 0;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+}
+
+.power-button svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  height: 70%;
+}
+
+.power-button:hover {
+  background-color: var(--button-orange-hover);
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.power-button:active {
+  transform: scale(0.95);
+}
+
+#format-control, #exposure-control, #focus-control, #hdr-control {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#wb-picker-section {
+  width: 100%;
+  position: relative;
+}
+
+.wb-content {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  width: 100%;
+  max-width: 1200px;
+  justify-content: space-between;
+}
+
+.wb-title {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--wb-border);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.wb-left-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 200px;
+}
+
+.wb-toggle-area {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.wb-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.wb-preset-btn {
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid var(--wb-border);
+  background-color: var(--panel-dark);
+  color: var(--text-light);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.wb-preset-btn:hover {
+  background-color: var(--wb-accent);
+  border-color: var(--wb-hover);
+  transform: scale(1.02);
+}
+
+.wb-sliders {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 500px;
+}
+
+.wb-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.wb-slider-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-light);
+  display: flex;
+  justify-content: space-between;
+}
+
+.wb-slider-track {
+  position: relative;
+  height: 30px;
+}
+
+.wb-slider-track input[type="range"] {
+  position: absolute;
+  width: 100%;
+  height: 30px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.wb-slider-track input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 30px;
+  background: var(--text-light);
+  border: 2px solid var(--wb-border);
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.wb-slider-track input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 30px;
+  background: var(--text-light);
+  border: 2px solid var(--wb-border);
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.wb-slider-gradient {
+  position: absolute;
+  width: 100%;
+  height: 30px;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.temp-gradient {
+  background: linear-gradient(to right,
+    #4169E1 0%,    /* Left - Deep blue (high K, cool) */
+    #6495ED 15%,   /* Cornflower blue */
+    #87CEEB 30%,   /* Sky blue */
+    #FFF8DC 45%,   /* Neutral/warm white */
+    #FFE4B5 60%,   /* Light orange */
+    #FFA500 80%,   /* Orange */
+    #FF8C00 100%   /* Right - Dark orange (low K, warm) */
+  );
+}
+
+.tint-gradient {
+  background: linear-gradient(to right,
+    #00FF00 0%,    /* -100 Green */
+    #E6E4D9 50%,   /* 0 Neutral */
+    #FF00FF 100%   /* +100 Magenta */
+  );
+}
+
+.wb-right-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
+.wb-reset-btn {
+  padding: 0.8rem 1.5rem;
+  background-color: var(--panel-dark);
+  color: var(--text-light);
+  border: 2px solid var(--wb-border);
+  border-radius: 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 100px;
+}
+
+.wb-reset-btn:hover {
+  background-color: var(--wb-hover);
+  transform: scale(1.05);
+}
+
+.wb-picker-active {
+  cursor: crosshair !important;
+  box-shadow: 0 0 20px var(--wb-border) !important;
+}
+
+/* Legacy toggle button styles removed - now using .footer-tab-btn */
+
+/* ================================================================= */
+/* New Footer Container Design - All sections inside                */
+/* ================================================================= */
+#main-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--panel-light);
+  z-index: 200;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+
+/* Footer tabs (attached to top edge) */
+.footer-tabs {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 2%;
+}
+
+.footer-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 1.5rem 0.5rem 1.5rem;
+  background: var(--panel-light);
+  border: 2px solid var(--wb-border);
+  border-bottom: none;
+  border-radius: 15px 15px 0 0;
+  color: var(--text-light);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.footer-tab-btn:hover {
+  background: var(--wb-accent);
+  border-color: var(--wb-hover);
+}
+
+.footer-tab-btn.active {
+  background: var(--wb-accent);
+}
+
+.footer-tab-btn svg {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.footer-tab-btn.active svg {
+  transform: rotate(180deg);
+}
+
+/* Footer content area */
+.footer-content {
+  position: relative;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.4s ease;
+}
+
+.footer-content.expanded {
+  max-height: 300px;
+}
+
+/* Tab sections inside footer */
+.footer-section {
+  display: none;
+  padding: 1.5rem;
+  padding-top: 0.8rem;
+  background-color: var(--panel-light);
+}
+
+.footer-section.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Thumbnails section (formerly photo-carousel) */
+#thumbnails-section {
+  display: none;
+  padding: 1rem;
+  position: relative;
+}
+
+#thumbnails-section.active {
+  display: block;
+}
+
+#thumbnails-section .photo-carousel {
+  position: relative;
+  width: fit-content;
+  max-width: 80vw;
+  margin: 0 auto;
+  padding: 0.5rem;
+  display: flex;
+  overflow-x: auto;
+  gap: 0.5rem;
+  background-color: var(--panel-dark);
+  border-radius: 8px;
+  border: 1px solid #858585;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  height: 100px;
+}
+
+#thumbnails-section .photo-carousel::-webkit-scrollbar { display: none; }
+#thumbnails-section .photo-carousel img { height: 80px; border-radius: 6px; cursor: pointer; transition: transform 0.2s ease; }
+#thumbnails-section .photo-carousel img:hover { transform: scale(1.1); box-shadow: 0 0 8px var(--accent-yellow); }
+
+/* ================================================================= */
+/* Saturation and Contrast Sections (now footer sections)           */
+/* ================================================================= */
+#saturation-section, #contrast-section {
+  width: 100%;
+  position: relative;
+}
+
+.settings-section-content {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  width: 100%;
+  max-width: 1200px;
+  justify-content: space-between;
+}
+
+.settings-section-title {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--wb-border);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-section-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  min-width: 150px;
+}
+
+.settings-section-presets {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.settings-section-presets button {
+  padding: 0.5rem 1rem;
+  background-color: var(--panel-dark);
+  color: var(--text-light);
+  border: 2px solid var(--wb-border);
+  border-radius: 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.settings-section-presets button:hover {
+  background-color: var(--wb-hover);
+  transform: translateY(-2px);
+}
+
+.settings-section-slider-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+}
+
+.settings-section-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.settings-section-slider-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.settings-section-slider-group input[type="range"] {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #333, #666, #999);
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+}
+
+.settings-section-slider-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--wb-border);
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+
+.settings-section-slider-group input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--wb-border);
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);
+  border: none;
+}
+
+.settings-section-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.settings-section-right button {
+  padding: 0.8rem 1.5rem;
+  background-color: var(--panel-dark);
+  color: var(--text-light);
+  border: 2px solid var(--wb-border);
+  border-radius: 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 100px;
+}
+
+.settings-section-right button:hover {
+  background-color: var(--wb-hover);
+  transform: scale(1.05);
+}
+
+/* Legacy sat/contrast toggle button styles removed - now using .footer-tab-btn */
+
+/* SVG icon styles for footer tabs */
+.footer-tab-btn svg line {
+  stroke: var(--wb-border);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.footer-tab-btn svg circle {
+  stroke: var(--wb-border);
+}
+
+.footer-tab-btn svg path {
+  stroke: var(--wb-border);
+}
+
+</style>
+</head>
+<body>
+  <header style="display:flex; justify-content:space-between; align-items:center;">
+    <div>photobox</div>
+    <div id="last-modified" style="text-align:center; font-size: 1rem; font-style: italic; font-weight: 400;"></div>
+    <div id="status-info" style="font-size: 1rem; font-style: normal; font-weight: 400;"></div>
+  </header>
+
+  <main>
+    <div class="side-panel left-panel">
+      <!-- Folder selector -->
+      <div style="margin-bottom: 1rem; display: flex; flex-direction: column;">
+        <label for="folder-input" style="margin-bottom: 0.5rem;">Destination folder:</label>
+        <input type="text" id="folder-input" list="folder-list" placeholder="ceramic_2025-10-28" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 4px; border: 1px solid var(--border-light); background: var(--panel-dark); color: var(--text-light); font-family: 'Nunito Sans', sans-serif; font-size: 1rem;">
+        <datalist id="folder-list"></datalist>
+        <div style="display: flex; gap: 0.5rem;">
+          <button id="create-folder-btn" style="flex: 1;">➕ Create</button>
+          <button id="load-folder-btn" style="flex: 1;">📁 Load</button>
+        </div>
+      </div>
+
+      <button id="capture-photo-btn">📷 Capture Photo</button>
+
+      <!-- HDR Mode switch -->
+      <div id="hdr-control">
+        <div class="toggle-switch hdr-switch">
+          <input type="checkbox" id="hdr-toggle">
+          <label for="hdr-toggle" class="toggle-label">
+            <span class="toggle-text left">NORMAL</span>
+            <span class="toggle-text right">HDR</span>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Format switch -->
+      <div id="format-control">
+        <div class="toggle-switch format-switch">
+          <input type="checkbox" id="format-toggle">
+          <label for="format-toggle" class="toggle-label">
+            <span class="toggle-text left">JPEG</span>
+            <span class="toggle-text right">RAW</span>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Exposure switch -->
+      <div id="exposure-control">
+        <div class="toggle-switch exposure-switch">
+          <input type="checkbox" id="exposure-toggle">
+          <label for="exposure-toggle" class="toggle-label">
+            <span class="toggle-text left">AUTO</span>
+            <span class="toggle-text right">MANUAL</span>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Exposure carousels -->
+      <div class="exposure-carousels" style="margin-top:1rem;">
+        <div class="carousel-container" data-setting="ISO">
+          <div class="carousel-top-label">GAIN</div>
+          <div class="ticker"></div>
+          <ul class="carousel-list" tabindex="0"></ul>
+          <div class="label">ISO</div>
+        </div>
+        <div class="carousel-container" data-setting="Shutter">
+          <div class="carousel-top-label">SPEED</div>
+          <div class="ticker"></div>
+          <ul class="carousel-list" tabindex="0"></ul>
+          <div class="label">μs</div>
+        </div>
+        <div class="carousel-container" data-setting="EV">
+          <div class="carousel-top-label">EV</div>
+          <div class="ticker"></div>
+          <ul class="carousel-list" tabindex="0"></ul>
+          <div class="label">EV</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="stream-container">
+      <div class="stream-overlay" id="capture-overlay">Capturing...</div>
+      <img id="live-preview" src="/video_feed" alt="Live Stream" loading="lazy">
+
+      <!-- Camera Settings Display - Horizontal below video -->
+      <div class="camera-settings" id="camera-settings">
+        <div class="settings-title">
+          CAMERA
+          <button id="fetch-settings-btn" style="background: var(--panel-dark); border: 1px solid var(--wb-border); color: var(--text-light); padding: 0.2rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-family: 'Nunito Sans', sans-serif;">Refresh</button>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">ISO:</span>
+          <span class="settings-value" id="settings-iso">--</span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Speed:</span>
+          <span class="settings-value" id="settings-speed">--</span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">WB:</span>
+          <span class="settings-value" id="settings-wb">--</span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Tint:</span>
+          <span class="settings-value" id="settings-tint">--</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-panel right-panel">
+      <!-- Turntable Control Section -->
+      <div style="background: var(--panel-dark); padding: 1rem; border-radius: 8px; border: 1px solid var(--highlight);">
+        <h3 style="color: var(--text-light); margin: 0 0 0.75rem 0; font-size: 1rem; text-align: center;">🔄 Turntable</h3>
+
+        <!-- Status Display -->
+        <div id="turntable-status" style="background: var(--panel-light); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.75rem; font-family: monospace; font-size: 0.8rem; text-align: center;">
+          <span id="tt-position">---</span>° | <span id="tt-state">Unknown</span>
+        </div>
+
+        <!-- Manual Control Buttons -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; margin-bottom: 0.75rem;">
+          <button onclick="rotateTurntable('left', 10)" style="background: var(--button-green-bg); border: 1px solid var(--button-green-border); color: var(--text-light); padding: 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">← 10°</button>
+          <button onclick="rotateTurntable('home')" style="background: var(--button-orange-bg); border: 1px solid var(--button-orange-border); color: var(--text-light); padding: 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">🏠</button>
+          <button onclick="rotateTurntable('right', 10)" style="background: var(--button-green-bg); border: 1px solid var(--button-green-border); color: var(--text-light); padding: 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">10° →</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4rem; margin-bottom: 0.75rem;">
+          <button onclick="rotateTurntable('left', 45)" style="background: var(--button-green-bg); border: 1px solid var(--button-green-border); color: var(--text-light); padding: 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">← 45°</button>
+          <button onclick="rotateTurntable('right', 45)" style="background: var(--button-green-bg); border: 1px solid var(--button-green-border); color: var(--text-light); padding: 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">45° →</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4rem; margin-bottom: 0.75rem;">
+          <button onclick="rotateTurntable('left', 90)" style="background: var(--button-green-bg); border: 1px solid var(--button-green-border); color: var(--text-light); padding: 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">← 90°</button>
+          <button onclick="rotateTurntable('right', 90)" style="background: var(--button-green-bg); border: 1px solid var(--button-green-border); color: var(--text-light); padding: 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">90° →</button>
+        </div>
+
+        <button onclick="setHomePosition()" style="width: 100%; background: var(--accent-yellow); border: 1px solid var(--highlight); color: var(--text-light); padding: 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; margin-bottom: 0.75rem;">Set as Home</button>
+
+        <!-- 360° Photo Sequence -->
+        <div style="background: var(--panel-light); padding: 0.75rem; border-radius: 6px; margin-bottom: 0.75rem;">
+          <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--border-light);">📸 360° Photos</div>
+
+          <select id="photo-count-360" style="width: 100%; padding: 0.4rem; margin-bottom: 0.5rem; border-radius: 4px; border: 1px solid var(--highlight); background: var(--panel-dark); color: var(--text-light); font-family: 'Nunito Sans', sans-serif; font-size: 0.85rem;">
+            <option value="4" selected>4 photos (90° each)</option>
+            <option value="8">8 photos (45° each)</option>
+            <option value="12">12 photos (30° each)</option>
+            <option value="18">18 photos (20° each)</option>
+          </select>
+
+          <button onclick="capture360Sequence()" id="capture-360-btn" style="width: 100%; background: var(--wb-accent); border: 1px solid var(--wb-border); color: var(--text-light); padding: 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">🎯 Capture Sequence</button>
+          <div id="sequence-progress" style="margin-top: 0.4rem; font-size: 0.75rem; color: var(--wb-hover); display: none; text-align: center;">
+            Progress: <span id="sequence-count">0</span> / <span id="sequence-total">0</span>
+          </div>
+        </div>
+
+        <!-- 360° Video Recording -->
+        <div style="background: var(--panel-light); padding: 0.75rem; border-radius: 6px; margin-bottom: 0.75rem;">
+          <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--border-light);">🎬 360° Video</div>
+
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; padding: 0.3rem; background: var(--panel-bg); border-radius: 4px;">
+            <input type="checkbox" id="video-loop-mode" checked style="cursor: pointer;">
+            <label for="video-loop-mode" style="font-size: 0.8rem; cursor: pointer; user-select: none;">Loop mode (constant speed)</label>
+          </div>
+
+          <select id="video-duration-360" style="width: 100%; padding: 0.4rem; margin-bottom: 0.5rem; border-radius: 4px; border: 1px solid var(--highlight); background: var(--panel-dark); color: var(--text-light); font-family: 'Nunito Sans', sans-serif; font-size: 0.85rem;">
+            <option value="10">Fast (10s)</option>
+            <option value="20">Medium (20s)</option>
+            <option value="30" selected>Slow (30s)</option>
+            <option value="45">Very Slow (45s)</option>
+            <option value="60">Ultra Slow (60s)</option>
+          </select>
+
+          <button onclick="record360Video()" id="record-360-btn" style="width: 100%; background: var(--wb-accent); border: 1px solid var(--wb-border); color: var(--text-light); padding: 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">🎥 Record 360°</button>
+          <div id="video-progress-360" style="margin-top: 0.4rem; font-size: 0.75rem; color: var(--wb-hover); display: none; text-align: center;">
+            Recording... <span id="video-time-remaining">0</span>s remaining
+          </div>
+        </div>
+
+        <!-- Emergency Stop -->
+        <button onclick="emergencyStop()" style="width: 100%; background: #8B0000; border: 1px solid #FF0000; color: white; padding: 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">⛔ STOP</button>
+      </div>
+
+      <!-- Focus control -->
+      <div id="focus-control" style="margin-top:1rem;">
+        <div style="font-size: 0.75rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--border-light); text-align: center;">FOCUS</div>
+        <div class="toggle-switch focus-switch">
+          <input type="checkbox" id="focus-toggle">
+          <label for="focus-toggle" class="toggle-label">
+            <span class="toggle-text left">AUTO</span>
+            <span class="toggle-text right">MANUAL</span>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Focus carousel (horizontal) -->
+      <div class="focus-carousel-container" style="margin-top:0.5rem;">
+        <div class="carousel-container horizontal" data-setting="Focus">
+          <div class="ticker"></div>
+          <ul class="carousel-list" tabindex="0"></ul>
+          <div class="label">cm</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="photo-modal" class="photo-modal" style="display:none;">
+    <span id="modal-close" class="modal-close">&times;</span>
+    <span id="modal-prev" class="modal-arrow">&#8592;</span>
+    <span id="modal-next" class="modal-arrow">&#8594;</span>
+  </div>
+
+  <!-- New Footer with Tabs and Sections -->
+  <footer id="main-footer">
+    <!-- Tab buttons (attached to footer top edge) -->
+    <div class="footer-tabs">
+      <button id="thumbnails-tab-btn" class="footer-tab-btn active" data-section="thumbnails" title="Thumbnails">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"/>
+          <rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/>
+        </svg>
+        <span>THUMBS</span>
+      </button>
+      <button id="wb-tab-btn" class="footer-tab-btn" data-section="wb" title="White Balance">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/>
+        </svg>
+        <span>WB</span>
+      </button>
+      <button id="sat-tab-btn" class="footer-tab-btn" data-section="saturation" title="Saturation">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="4" y1="18" x2="4" y2="18"/>
+          <line x1="8" y1="15" x2="8" y2="18"/>
+          <line x1="12" y1="10" x2="12" y2="18"/>
+          <line x1="16" y1="6" x2="16" y2="18"/>
+          <line x1="20" y1="6" x2="20" y2="18"/>
+        </svg>
+        <span>SATURATION</span>
+      </button>
+      <button id="contrast-tab-btn" class="footer-tab-btn" data-section="contrast" title="Contrast">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 2 A 10 10 0 0 1 12 22 Z" fill="black"/>
+        </svg>
+        <span>CONTRAST</span>
+      </button>
+    </div>
+
+    <!-- Footer content area -->
+    <div class="footer-content">
+      <!-- Thumbnails Section (default active) -->
+      <div id="thumbnails-section" class="footer-section active">
+        <div class="photo-carousel" id="photo-carousel"></div>
+        <button id="carousel-left" class="carousel-arrow">&#8592;</button>
+        <button id="carousel-right" class="carousel-arrow">&#8594;</button>
+      </div>
+
+      <!-- WB Section -->
+      <div id="wb-picker-section" class="footer-section">
+        <div class="wb-title">White Balance</div>
+        <div class="wb-content">
+          <!-- Left: Eyedropper toggle and presets -->
+          <div class="wb-left-controls">
+            <div class="wb-toggle-area">
+              <label style="font-size: 0.9rem; font-weight: 600; color: var(--text-light);">EYEDROPPER</label>
+              <div class="toggle-switch wb-switch">
+                <input type="checkbox" id="wb-picker-toggle">
+                <label for="wb-picker-toggle" class="toggle-label">
+                  <span class="toggle-text left">OFF</span>
+                  <span class="toggle-text right">ON</span>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+            <div class="wb-presets">
+              <button class="wb-preset-btn" data-temp="3000" data-tint="0">Tungsten</button>
+              <button class="wb-preset-btn" data-temp="5500" data-tint="0">Daylight</button>
+              <button class="wb-preset-btn" data-temp="6500" data-tint="0">Cloudy</button>
+              <button class="wb-preset-btn" data-temp="7500" data-tint="0">Shade</button>
+            </div>
+          </div>
+
+          <!-- Center: Temperature/Tint sliders -->
+          <div class="wb-sliders">
+            <div class="wb-slider-group">
+              <label class="wb-slider-label">Temperature: <span id="temp-value">5500</span>K</label>
+              <div class="wb-slider-track">
+                <input type="range" id="temp-slider" min="2964" max="7590" value="5500" step="50" dir="rtl">
+                <div class="wb-slider-gradient temp-gradient"></div>
+              </div>
+            </div>
+            <div class="wb-slider-group">
+              <label class="wb-slider-label">Tint: <span id="tint-value">0</span></label>
+              <div class="wb-slider-track">
+                <input type="range" id="tint-slider" min="-100" max="100" value="0" step="5">
+                <div class="wb-slider-gradient tint-gradient"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Reset button -->
+          <div class="wb-right-controls">
+            <button id="reset-wb-btn" class="wb-reset-btn">Auto</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saturation Section -->
+      <div id="saturation-section" class="footer-section">
+        <div class="settings-section-title">SATURATION</div>
+        <div class="settings-section-content">
+          <!-- Left: Quick presets -->
+          <div class="settings-section-left">
+            <div class="settings-section-presets">
+              <button data-value="-100">B&W</button>
+              <button data-value="-50">Low</button>
+              <button data-value="0">Normal</button>
+              <button data-value="50">High</button>
+            </div>
+          </div>
+
+          <!-- Center: Slider -->
+          <div class="settings-section-slider-container" style="margin-left: 5cm;">
+            <div class="settings-section-slider-group">
+              <label>Saturation: <span id="sat-value">0</span></label>
+              <input type="range" id="sat-slider" min="-100" max="100" value="0" step="5">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contrast Section -->
+      <div id="contrast-section" class="footer-section">
+        <div class="settings-section-title">CONTRAST</div>
+        <div class="settings-section-content">
+          <!-- Left: Quick presets -->
+          <div class="settings-section-left">
+            <div class="settings-section-presets">
+              <button data-value="-50">Low</button>
+              <button data-value="0">Normal</button>
+              <button data-value="50">High</button>
+              <button data-value="100">Max</button>
+            </div>
+          </div>
+
+          <!-- Center: Slider -->
+          <div class="settings-section-slider-container" style="margin-left: 5cm;">
+            <div class="settings-section-slider-group">
+              <label>Contrast: <span id="contrast-value">0</span></label>
+              <input type="range" id="contrast-slider" min="-100" max="100" value="0" step="5">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const overlay = document.getElementById('capture-overlay');
+      const liveImg = document.getElementById('live-preview');
+      const captureBtn = document.getElementById('capture-photo-btn');
+      const restartStreamBtn = document.getElementById('restart-stream-btn');
+      const restartAppBtn = document.getElementById('restart-app-btn');
+      const carouselContainer = document.getElementById('photo-carousel');
+      const carouselLeftBtn = document.getElementById('carousel-left');
+      const carouselRightBtn = document.getElementById('carousel-right');
+      const modal = document.getElementById('photo-modal');
+      const modalClose = document.getElementById('modal-close');
+      const modalPrev = document.getElementById('modal-prev');
+      const modalNext = document.getElementById('modal-next');
+      const exposureToggle = document.getElementById('exposure-toggle');
+      const formatToggle = document.getElementById('format-toggle');
+      const focusToggle = document.getElementById('focus-toggle');
+      const hdrToggle = document.getElementById('hdr-toggle');
+      const lastModifiedBox = document.getElementById('last-modified');
+      const statusInfoBox = document.getElementById('status-info');
+
+      if (!overlay || !liveImg) {
+        console.warn("Essential UI elements missing – aborting script initializers.");
+        return;
+      }
+
+      const exposureSettings = {
+        ISO: [100, 200, 400, 800, 1600, 3200, 6400],
+        Shutter: ['1/1000', '1/500', '1/250', '1/125', '1/60', '1/30', '1/15', '1/8', '1/4', '1/2', '1"', '2"', '4"', '8"', '15"', '30"'],
+        Focus: ['10cm', '15cm', '20cm', '30cm', '50cm', '70cm', '1m', '2m', '∞'],
+        EV: ['-3', '-2.5', '-2', '-1.5', '-1', '-0.5', '0', '+0.5', '+1', '+1.5', '+2', '+2.5', '+3']
+      };
+      let exposureMode = 'auto';
+      let focusMode = 'manual';  // Default to manual focus
+      let hdrMode = 'normal';
+      let photos = [];
+      let currentIndex = -1;
+      let modalMedia = null;
+      const fullResCache = {};
+
+      // Debounce timers for live preview updates
+      let exposureDebounceTimer = null;
+      let focusDebounceTimer = null;
+
+      // Visual feedback functions for preview updates
+      function showPreviewUpdating() {
+        let overlay = document.getElementById('updating-overlay');
+        if (!overlay) {
+          overlay = document.createElement('div');
+          overlay.id = 'updating-overlay';
+          overlay.textContent = '⚙️ Updating preview...';
+          overlay.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            border: 2px solid var(--border-light);
+            z-index: 9999;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+          `;
+          document.body.appendChild(overlay);
+          setTimeout(() => overlay.style.opacity = '0.9', 10);
+        } else {
+          overlay.style.opacity = '0.9';
+        }
+        return overlay;
+      }
+
+      function hidePreviewUpdating() {
+        const overlay = document.getElementById('updating-overlay');
+        if (overlay) {
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            if (overlay.parentNode) {
+              overlay.parentNode.removeChild(overlay);
+            }
+          }, 300);
+        }
+      }
+
+      function shutterToMicroseconds(shutter) {
+        if (!shutter) return null;
+        if (shutter.includes('/')) {
+          const parts = shutter.split('/');
+          if (parts.length === 2) {
+            const val = Number(parts[0]) / Number(parts[1]);
+            return Math.round(val * 1e6);
+          }
+        } else {
+          // Remove quote mark if present (e.g., '1"' -> '1')
+          const cleanShutter = shutter.replace('"', '');
+          const val = Number(cleanShutter);
+          return Math.round(val * 1e6);
+        }
+        return null;
+      }
+
+      function focusToLensPosition(focusStr) {
+        if (!focusStr) return null;
+        const mapping = {
+          '10cm': '10.0',
+          '15cm': '8.0',
+          '20cm': '6.0',
+          '30cm': '4.0',
+          '50cm': '3.0',
+          '70cm': '2.0',
+          '1m': '1.0',
+          '2m': '0.5',
+          '∞': '0.0'
+        };
+        return mapping[focusStr] || null;
+      }
+
+      function createCarousel(settingName) {
+        const container = document.querySelector(`.carousel-container[data-setting="${settingName}"]`);
+        if (!container) return;
+        const list = container.querySelector('.carousel-list');
+        const topLabel = container.querySelector('.carousel-top-label');
+        const bottomLabel = container.querySelector('.label');
+        list.innerHTML = '';
+
+        // Check if this is a horizontal carousel
+        const isHorizontal = container.classList.contains('horizontal');
+
+        // Calculate offsets from top and bottom labels
+        const topLabelHeight = topLabel ? topLabel.offsetHeight : 0;
+        const bottomLabelHeight = bottomLabel ? bottomLabel.offsetHeight : 0;
+
+        // Add spacers at start (left for horizontal, top for vertical)
+        for (let i = 0; i < 2; i++) {
+          const spacer = document.createElement('li');
+          spacer.style.visibility = 'hidden';
+          spacer.textContent = '–';
+          list.appendChild(spacer);
+        }
+
+        exposureSettings[settingName].forEach((value, idx) => {
+          const li = document.createElement('li');
+          li.textContent = value;
+          li.dataset.real = "true";
+          // Default: first item for most carousels, but 30cm (idx 3) for Focus
+          const defaultIdx = (settingName === 'Focus') ? 3 : 0;
+          if (idx === defaultIdx) li.classList.add('selected');
+          li.addEventListener('click', () => {
+            const containerRect = container.getBoundingClientRect();
+            const listRect = list.getBoundingClientRect();
+
+            if (isHorizontal) {
+              // Horizontal scrolling
+              const listOffsetInContainer = listRect.left - containerRect.left;
+              const tickerCenterInContainer = container.offsetWidth / 2;
+              const tickerCenterInList = tickerCenterInContainer - listOffsetInContainer;
+              const itemCenter = li.offsetWidth / 2;
+              const scrollTarget = li.offsetLeft - tickerCenterInList + itemCenter;
+              list.scrollTo({ left: scrollTarget, behavior: 'smooth' });
+            } else {
+              // Vertical scrolling
+              const listOffsetInContainer = listRect.top - containerRect.top;
+              const tickerCenterInContainer = container.offsetHeight / 2;
+              const tickerCenterInList = tickerCenterInContainer - listOffsetInContainer;
+              const itemCenter = li.offsetHeight / 2;
+              const scrollTarget = li.offsetTop - tickerCenterInList + itemCenter;
+              list.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+            }
+
+            Array.from(list.children).forEach(c => c.classList.remove('selected'));
+            li.classList.add('selected');
+
+            // Trigger focus update if this is the Focus carousel
+            if (settingName === 'Focus' && focusMode === 'manual') {
+              updateLiveFocus();
+            }
+
+            // Trigger exposure update if this is ISO or Shutter carousel
+            if ((settingName === 'ISO' || settingName === 'Shutter') && exposureMode === 'manual') {
+              updateLiveExposure();
+            }
+          });
+          list.appendChild(li);
+        });
+
+        // Add spacers at bottom
+        for (let i = 0; i < 2; i++) {
+          const spacer = document.createElement('li');
+          spacer.style.visibility = 'hidden';
+          spacer.textContent = '–';
+          list.appendChild(spacer);
+        }
+
+        let scrollTimeout;
+        list.addEventListener('scroll', () => {
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(() => {
+            const containerRect = container.getBoundingClientRect();
+            const listRect = list.getBoundingClientRect();
+
+            let center, tickerCenterInList;
+            if (isHorizontal) {
+              // Horizontal carousel
+              const listOffsetInContainer = listRect.left - containerRect.left;
+              const tickerCenterInContainer = container.offsetWidth / 2;
+              tickerCenterInList = tickerCenterInContainer - listOffsetInContainer;
+              center = list.scrollLeft + tickerCenterInList;
+            } else {
+              // Vertical carousel
+              const listOffsetInContainer = listRect.top - containerRect.top;
+              const tickerCenterInContainer = container.offsetHeight / 2;
+              tickerCenterInList = tickerCenterInContainer - listOffsetInContainer;
+              center = list.scrollTop + tickerCenterInList;
+            }
+
+            // Find the item closest to ticker center
+            let closest = null;
+            let minDist = Infinity;
+            Array.from(list.children).forEach(node => {
+              if (node.style.visibility === 'hidden') return;
+              const liCenter = isHorizontal
+                ? node.offsetLeft + node.offsetWidth / 2
+                : node.offsetTop + node.offsetHeight / 2;
+              const d = Math.abs(center - liCenter);
+              if (d < minDist) { minDist = d; closest = node; }
+            });
+            if (closest) {
+              Array.from(list.children).forEach(c => c.classList.remove('selected'));
+              closest.classList.add('selected');
+
+              // Snap to ticker center position
+              if (isHorizontal) {
+                const itemCenter = closest.offsetWidth / 2;
+                const scrollTarget = closest.offsetLeft - tickerCenterInList + itemCenter;
+                list.scrollTo({ left: scrollTarget, behavior: 'smooth' });
+              } else {
+                const itemCenter = closest.offsetHeight / 2;
+                const scrollTarget = closest.offsetTop - tickerCenterInList + itemCenter;
+                list.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+              }
+
+              // Trigger focus update if this is the Focus carousel
+              if (settingName === 'Focus' && focusMode === 'manual') {
+                updateLiveFocus();
+              }
+
+              // Trigger exposure update if this is ISO or Shutter carousel
+              if ((settingName === 'ISO' || settingName === 'Shutter') && exposureMode === 'manual') {
+                updateLiveExposure();
+              }
+            }
+          }, 100);
+        });
+
+        // Initialize scroll position
+        setTimeout(() => {
+          // Scroll to the selected item (for Focus: 30cm), otherwise first item
+          const selected = list.querySelector('li.selected[data-real="true"]');
+          const target = selected || list.querySelector('li[data-real="true"]');
+          if (target) {
+            const containerRect = container.getBoundingClientRect();
+            const listRect = list.getBoundingClientRect();
+
+            if (isHorizontal) {
+              // Horizontal scrolling
+              const listOffsetInContainer = listRect.left - containerRect.left;
+              const tickerCenterInContainer = container.offsetWidth / 2;
+              const tickerCenterInList = tickerCenterInContainer - listOffsetInContainer;
+              const itemCenter = target.offsetWidth / 2;
+              const scrollTarget = target.offsetLeft - tickerCenterInList + itemCenter;
+              list.scrollLeft = scrollTarget;
+            } else {
+              // Vertical scrolling
+              const listOffsetInContainer = listRect.top - containerRect.top;
+              const tickerCenterInContainer = container.offsetHeight / 2;
+              const tickerCenterInList = tickerCenterInContainer - listOffsetInContainer;
+              const itemCenter = target.offsetHeight / 2;
+              const scrollTarget = target.offsetTop - tickerCenterInList + itemCenter;
+              list.scrollTop = scrollTarget;
+            }
+          }
+        }, 80);
+      }
+
+      ['ISO', 'Aperture', 'Shutter', 'Focus', 'EV'].forEach(createCarousel);
+
+      const exposureSlider = document.querySelector('#exposure-control .toggle-slider');
+      const formatSlider = document.querySelector('#format-control .toggle-slider');
+      const focusSlider = document.querySelector('#focus-control .toggle-slider');
+      const hdrSlider = document.querySelector('#hdr-control .toggle-slider');
+      const exposureLabels = Array.from(document.querySelectorAll('#exposure-control .toggle-text'));
+      const formatLabels = Array.from(document.querySelectorAll('#format-control .toggle-text'));
+      const focusLabels = Array.from(document.querySelectorAll('#focus-control .toggle-text'));
+      const hdrLabels = Array.from(document.querySelectorAll('#hdr-control .toggle-text'));
+
+      const knobMin = 4, knobMax = 76;
+
+      if (exposureToggle) exposureToggle.style.display = 'none';
+      if (formatToggle) formatToggle.style.display = 'none';
+      if (focusToggle) focusToggle.style.display = 'none';
+      if (hdrToggle) hdrToggle.style.display = 'none';
+
+      function setKnobPositionFor(sliderEl, px, animate = true) {
+        if (!sliderEl) return;
+        sliderEl.style.transition = animate ? 'left 0.2s ease' : 'none';
+        sliderEl.style.left = px + 'px';
+      }
+
+      function updateExposureModeUI() {
+        const isManual = exposureToggle && exposureToggle.checked;
+        exposureMode = isManual ? 'manual' : 'auto';
+        setKnobPositionFor(exposureSlider, isManual ? knobMax : knobMin, true);
+
+        exposureLabels.forEach(lbl => {
+          if (lbl.classList.contains('left')) {
+            lbl.style.color = isManual ? 'var(--switch-label-inactive)' : 'var(--switch-label-auto-active)';
+          } else if (lbl.classList.contains('right')) {
+            lbl.style.color = isManual ? 'var(--switch-label-manual-active)' : 'var(--switch-label-inactive)';
+          }
+        });
+
+        document.querySelectorAll('.exposure-carousels .carousel-container[data-setting="ISO"], .exposure-carousels .carousel-container[data-setting="Shutter"]').forEach(c => {
+          if (exposureMode === 'auto') {
+            c.style.filter = 'grayscale(70%) brightness(80%)';
+            c.style.pointerEvents = 'none';
+            c.style.opacity = '0.6';
+          } else {
+            c.style.filter = 'none';
+            c.style.pointerEvents = 'auto';
+            c.style.opacity = '1';
+          }
+        });
+
+        // Enable live preview updates for WYSIWYG experience
+        updateLiveExposure();
+      }
+
+      async function updateLiveExposure() {
+        // Clear existing timer
+        clearTimeout(exposureDebounceTimer);
+
+        // Wait 800ms after last change before updating (optimized for responsiveness)
+        exposureDebounceTimer = setTimeout(async () => {
+          const iso = document.querySelector('.carousel-container[data-setting="ISO"] li.selected')?.textContent || '';
+          const shutterStr = document.querySelector('.carousel-container[data-setting="Shutter"] li.selected')?.textContent || '';
+          const exposure_time = shutterToMicroseconds(shutterStr);
+
+          console.log('📸 Updating exposure:', { mode: exposureMode, iso, shutterStr, exposure_time });
+
+          // Show updating indicator
+          showPreviewUpdating();
+
+          try {
+            const form = new FormData();
+            form.append('mode', exposureMode);
+            if (exposureMode === 'manual') {
+              if (exposure_time) form.append('shutter_speed', exposure_time);
+              if (iso) form.append('iso', iso);
+            }
+            const resp = await fetch('/set_exposure', { method: 'POST', body: form });
+            if (!resp.ok) throw new Error('Failed to update exposure');
+
+            // Wait for stream to restart, then force reload
+            setTimeout(() => {
+              liveImg.src = `/video_feed?_=${Date.now()}`;
+              setTimeout(() => hidePreviewUpdating(), 500);
+            }, 1000);
+          } catch (e) {
+            console.error('Exposure update failed:', e);
+            hidePreviewUpdating();
+          }
+        }, 800); // Debounce: wait 800ms after last change (optimized)
+      }
+
+      function updateFocusModeUI() {
+        const isManual = focusToggle && focusToggle.checked;
+        focusMode = isManual ? 'manual' : 'auto';
+        setKnobPositionFor(focusSlider, isManual ? knobMax : knobMin, true);
+
+        focusLabels.forEach(lbl => {
+          if (lbl.classList.contains('left')) {
+            lbl.style.color = isManual ? 'var(--switch-label-inactive)' : 'var(--switch-label-auto-active)';
+          } else if (lbl.classList.contains('right')) {
+            lbl.style.color = isManual ? 'var(--switch-label-manual-active)' : 'var(--switch-label-inactive)';
+          }
+        });
+
+        const focusCarousel = document.querySelector('.carousel-container[data-setting="Focus"]');
+        if (focusCarousel) {
+          if (focusMode === 'auto') {
+            focusCarousel.style.filter = 'grayscale(70%) brightness(80%)';
+            focusCarousel.style.pointerEvents = 'none';
+            focusCarousel.style.opacity = '0.6';
+          } else {
+            focusCarousel.style.filter = 'none';
+            focusCarousel.style.pointerEvents = 'auto';
+            focusCarousel.style.opacity = '1';
+          }
+        }
+
+        // Update live preview focus
+        updateLiveFocus();
+      }
+
+      async function updateLiveFocus() {
+        // Clear existing timer
+        clearTimeout(focusDebounceTimer);
+
+        // Wait 800ms after last change before updating (optimized for responsiveness)
+        focusDebounceTimer = setTimeout(async () => {
+          // Show updating indicator
+          showPreviewUpdating();
+
+          if (focusMode === 'auto') {
+            // Send auto focus (0.0)
+            try {
+              const form = new FormData();
+              form.append('focus_distance', '0.0');
+              await fetch('/set_focus', { method: 'POST', body: form });
+              // Wait for stream to restart, then force reload
+              setTimeout(() => {
+                liveImg.src = `/video_feed?_=${Date.now()}`;
+                setTimeout(() => hidePreviewUpdating(), 500);
+              }, 1000);
+            } catch (e) {
+              console.error('Focus update failed:', e);
+              hidePreviewUpdating();
+            }
+          } else {
+            // Send manual focus position
+            const focusStr = document.querySelector('.carousel-container[data-setting="Focus"] li.selected')?.textContent || '';
+            const focus_distance = focusToLensPosition(focusStr);
+            if (focus_distance) {
+              try {
+                const form = new FormData();
+                form.append('focus_distance', focus_distance);
+                await fetch('/set_focus', { method: 'POST', body: form });
+                // Wait for stream to restart, then force reload
+                setTimeout(() => {
+                  liveImg.src = `/video_feed?_=${Date.now()}`;
+                  setTimeout(() => hidePreviewUpdating(), 500);
+                }, 1000);
+              } catch (e) {
+                console.error('Focus update failed:', e);
+                hidePreviewUpdating();
+              }
+            } else {
+              hidePreviewUpdating();
+            }
+          }
+        }, 800); // Debounce: wait 800ms after last change (optimized)
+      }
+
+      function updateFormatUI() {
+        const isRAW = formatToggle && formatToggle.checked;
+        setKnobPositionFor(formatSlider, isRAW ? knobMax : knobMin, true);
+
+        formatLabels.forEach(lbl => {
+          if (lbl.classList.contains('left')) {
+            lbl.style.color = isRAW ? 'var(--switch-label-inactive)' : 'var(--switch-label-auto-active)';
+          } else if (lbl.classList.contains('right')) {
+            lbl.style.color = isRAW ? 'var(--switch-label-manual-active)' : 'var(--switch-label-inactive)';
+          }
+        });
+      }
+
+      function updateHdrModeUI() {
+        const isHDR = hdrToggle && hdrToggle.checked;
+        hdrMode = isHDR ? 'hdr' : 'normal';
+        setKnobPositionFor(hdrSlider, isHDR ? knobMax : knobMin, true);
+
+        hdrLabels.forEach(lbl => {
+          if (lbl.classList.contains('left')) {
+            lbl.style.color = isHDR ? 'var(--switch-label-inactive)' : 'var(--switch-label-auto-active)';
+          } else if (lbl.classList.contains('right')) {
+            lbl.style.color = isHDR ? 'var(--switch-label-manual-active)' : 'var(--switch-label-inactive)';
+          }
+        });
+
+        // Enable/disable EV carousel based on HDR mode
+        const evCarousel = document.querySelector('.carousel-container[data-setting="EV"]');
+        if (evCarousel) {
+          if (hdrMode === 'normal') {
+            evCarousel.style.filter = 'grayscale(70%) brightness(80%)';
+            evCarousel.style.pointerEvents = 'none';
+            evCarousel.style.opacity = '0.6';
+          } else {
+            evCarousel.style.filter = 'none';
+            evCarousel.style.pointerEvents = 'auto';
+            evCarousel.style.opacity = '1';
+          }
+        }
+      }
+
+      function attachDragToSlider(sliderEl, checkboxEl, onChangeCallback) {
+        if (!sliderEl || !checkboxEl) return;
+        let drag = false;
+        let startX = 0;
+        let startLeft = 0;
+
+        function startDrag(x) {
+          drag = true;
+          startX = x;
+          startLeft = parseInt(window.getComputedStyle(sliderEl).left, 10) || knobMin;
+        }
+        function doDrag(x) {
+          if (!drag) return;
+          let newLeft = startLeft + (x - startX);
+          newLeft = Math.max(knobMin, Math.min(knobMax, newLeft));
+          setKnobPositionFor(sliderEl, newLeft, false);
+        }
+        function endDrag() {
+          if (!drag) return;
+          drag = false;
+          const currentLeft = parseInt(window.getComputedStyle(sliderEl).left, 10) || knobMin;
+          const middle = (knobMin + knobMax) / 2;
+          checkboxEl.checked = (currentLeft > middle);
+          onChangeCallback();
+        }
+
+        sliderEl.addEventListener('mousedown', (e) => { startDrag(e.clientX); e.preventDefault(); });
+        document.addEventListener('mousemove', (e) => { doDrag(e.clientX); });
+        document.addEventListener('mouseup', endDrag);
+
+        sliderEl.addEventListener('touchstart', (e) => { startDrag(e.touches[0].clientX); e.preventDefault(); });
+        document.addEventListener('touchmove', (e) => { if (e.touches && e.touches[0]) doDrag(e.touches[0].clientX); });
+        document.addEventListener('touchend', endDrag);
+      }
+
+      if (exposureToggle) {
+        exposureToggle.addEventListener('change', updateExposureModeUI);
+      }
+      if (formatToggle) {
+        formatToggle.addEventListener('change', updateFormatUI);
+      }
+      if (focusToggle) {
+        focusToggle.addEventListener('change', updateFocusModeUI);
+      }
+      if (hdrToggle) {
+        hdrToggle.addEventListener('change', updateHdrModeUI);
+      }
+
+      attachDragToSlider(exposureSlider, exposureToggle, updateExposureModeUI);
+      attachDragToSlider(formatSlider, formatToggle, updateFormatUI);
+      attachDragToSlider(focusSlider, focusToggle, updateFocusModeUI);
+      attachDragToSlider(hdrSlider, hdrToggle, updateHdrModeUI);
+
+      // Set focus to Manual by default
+      if (focusToggle) focusToggle.checked = true;
+
+      updateExposureModeUI();
+      updateFormatUI();
+      updateFocusModeUI();
+      updateHdrModeUI();
+
+      const thumbObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset && img.dataset.src) img.src = img.dataset.src;
+            thumbObserver.unobserve(img);
+          }
+        });
+      }, { root: carouselContainer, threshold: 0.05 });
+
+      function showPhoto(index) {
+        if (!photos || photos.length === 0) return;
+        currentIndex = ((index % photos.length) + photos.length) % photos.length;
+        const filename = photos[currentIndex];
+        const isVideo = filename.endsWith('.mp4');
+
+        if (modalMedia) {
+          try { modalMedia.pause?.(); } catch(e){}
+          modalMedia.remove();
+          modalMedia = null;
+        }
+
+        modalMedia = document.createElement(isVideo ? 'video' : 'img');
+        modalMedia.id = 'modal-img';
+        if (isVideo) {
+          modalMedia.controls = true;
+          modalMedia.autoplay = true;
+          modalMedia.loop = true;
+          modalMedia.muted = true;
+          modalMedia.src = `/photos/${filename}?_=${Date.now()}`;
+        } else {
+          // Load full-size image directly
+          modalMedia.src = `/photos/${filename}?_=${Date.now()}`;
+        }
+
+        modal.appendChild(modalMedia);
+        modal.style.display = 'flex';
+      }
+
+      if (modalClose) modalClose.addEventListener('click', () => { modal.style.display = 'none'; });
+      if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+      if (modalPrev) modalPrev.addEventListener('click', (e) => { e.stopPropagation(); showPhoto(currentIndex - 1); });
+      if (modalNext) modalNext.addEventListener('click', (e) => { e.stopPropagation(); showPhoto(currentIndex + 1); });
+      document.addEventListener('keydown', (e) => {
+        if (!modal || modal.style.display !== 'flex') return;
+        if (e.key === 'ArrowLeft') showPhoto(currentIndex - 1);
+        else if (e.key === 'ArrowRight') showPhoto(currentIndex + 1);
+        else if (e.key === 'Escape') modal.style.display = 'none';
+      });
+
+      const scrollAmount = 500;
+      if (carouselLeftBtn) carouselLeftBtn.addEventListener('click', () => carouselContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
+      if (carouselRightBtn) carouselRightBtn.addEventListener('click', () => carouselContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
+
+      async function loadRecentPhotos() {
+        try {
+          const resp = await fetch('/recent_photos');
+          photos = await resp.json();
+
+          carouselContainer.innerHTML = '';
+          photos.forEach((f, idx) => {
+            const isVideo = f.endsWith('.mp4');
+            if (isVideo) {
+              const wrapper = document.createElement('div');
+              wrapper.style.position = 'relative';
+              wrapper.style.display = 'inline-block';
+              wrapper.style.marginRight = '8px';
+              const thumb = new Image();
+              thumb.alt = f;
+              thumb.title = f;
+              thumb.dataset.src = `/photos/${f}?t=${Date.now()}`;
+              thumb.style.display = 'block';
+              thumb.style.height = '80px';
+              thumb.style.objectFit = 'cover';
+              wrapper.appendChild(thumb);
+
+              const play = document.createElement('div');
+              play.innerHTML = '▶';
+              play.style.position = 'absolute';
+              play.style.top = '50%';
+              play.style.left = '50%';
+              play.style.transform = 'translate(-50%,-50%)';
+              play.style.fontSize = '1.5rem';
+              play.style.color = 'white';
+              play.style.textShadow = '0 0 6px rgba(0,0,0,0.8)';
+              wrapper.appendChild(play);
+
+              wrapper.addEventListener('click', () => showPhoto(idx));
+              carouselContainer.appendChild(wrapper);
+              thumbObserver.observe(thumb);
+            } else {
+              const thumb = new Image();
+              thumb.alt = f; thumb.title = f;
+              thumb.dataset.src = `/photos/${f}?t=${Date.now()}`;
+              thumb.style.height = '80px';
+              thumb.style.objectFit = 'cover';
+              thumb.style.marginRight = '8px';
+              thumb.addEventListener('click', () => showPhoto(idx));
+              carouselContainer.appendChild(thumb);
+              thumbObserver.observe(thumb);
+            }
+          });
+        } catch (err) {
+          console.error('Error loading recent photos:', err);
+          carouselContainer.textContent = 'Failed to load photos.';
+        }
+      }
+
+      if (captureBtn) {
+        captureBtn.addEventListener('click', async () => {
+          overlay.textContent = "📸 Capturing...";
+          overlay.style.opacity = 1;
+
+          const iso = document.querySelector('.carousel-container[data-setting="ISO"] li.selected')?.textContent || '';
+          const shutterStr = document.querySelector('.carousel-container[data-setting="Shutter"] li.selected')?.textContent || '';
+          const exposure_time = shutterToMicroseconds(shutterStr);
+          const focusStr = document.querySelector('.carousel-container[data-setting="Focus"] li.selected')?.textContent || '';
+          const focus_distance = focusToLensPosition(focusStr);
+          const evStr = document.querySelector('.carousel-container[data-setting="EV"] li.selected')?.textContent || '0';
+
+          try {
+            const params = new URLSearchParams();
+            if (exposure_time) params.append('exposure_time', exposure_time);
+            if (iso) params.append('iso', iso);
+            params.append('mode', exposureMode);
+            params.append('focus_mode', focusMode);
+            if (focus_distance) params.append('focus_distance', focus_distance);
+
+            // Add HDR mode and EV parameter
+            params.append('hdr_mode', hdrMode);
+            if (hdrMode === 'hdr' && evStr) {
+              params.append('ev', evStr);
+            }
+
+            // Add format parameter based on toggle state
+            const isRAW = formatToggle && formatToggle.checked;
+            params.append('format', isRAW ? 'raw' : 'jpeg');
+
+            const resp = await fetch(`/capture_photo?${params.toString()}`);
+            let data = {};
+            try { data = await resp.json(); } catch (e) {}
+
+            if (resp.ok) {
+              overlay.textContent = "✅ " + (data.message || "Photo saved.");
+              setTimeout(() => loadRecentPhotos(), 500);
+              liveImg.src = `${liveImg.src.split('?')[0]}?_=${Date.now()}`;
+            } else {
+              overlay.textContent = `❌ Error: ${data.error || 'Unknown'}`;
+            }
+          } catch (err) {
+            console.error('Capture failed:', err);
+            overlay.textContent = "❌ Capture failed: network error.";
+          }
+          setTimeout(() => overlay.style.opacity = 0, 1000);
+        });
+      }
+
+      // Record button removed - use 360° video in turntable section instead
+
+      async function updateDateTimeStorage() {
+        try {
+          const now = new Date();
+          const dateStr = now.toLocaleDateString('fr-FR', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+          const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+          let storageText = 'storage?';
+          try {
+            const r = await fetch('/storage');
+            if (r.ok) {
+              const d = await r.json();
+              storageText = `${d.free} free`;
+            }
+          } catch (e) { }
+          statusInfoBox.textContent = `${dateStr} ${timeStr} | 📦 ${storageText}`;
+        } catch (e) {
+          console.error('updateDateTimeStorage error', e);
+        }
+      }
+      updateDateTimeStorage();
+      setInterval(updateDateTimeStorage, 60000);
+
+      async function fetchLastModified() {
+        try {
+          const resp = await fetch('/last_modified');
+          const data = await resp.json();
+          if (resp.ok && data.last_modified) {
+            const last = new Date(data.last_modified * 1000);
+            lastModifiedBox.textContent = `Last modified: ${last.toLocaleString('fr-FR', { weekday:'short', year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' })}`;
+          } else {
+            lastModifiedBox.textContent = 'Last modified: ?';
+          }
+        } catch (e) {
+          console.error('fetchLastModified', e);
+          lastModifiedBox.textContent = 'Last modified: ?';
+        }
+      }
+      fetchLastModified();
+
+      // Load available folders into dropdown
+      async function loadFolderList() {
+        try {
+          const resp = await fetch('/list_folders');
+          const folders = await resp.json();
+          const datalist = document.getElementById('folder-list');
+          if (datalist) {
+            datalist.innerHTML = '';
+            folders.forEach(folder => {
+              const option = document.createElement('option');
+              option.value = folder;
+              datalist.appendChild(option);
+            });
+          }
+        } catch (e) {
+          console.error('Error loading folder list:', e);
+        }
+      }
+
+      // Create/Set folder button
+      const createFolderBtn = document.getElementById('create-folder-btn');
+      if (createFolderBtn) {
+        createFolderBtn.addEventListener('click', async () => {
+          const folderInput = document.getElementById('folder-input');
+          const folder = folderInput.value.trim();
+          if (!folder) {
+            alert('Please enter a folder name');
+            return;
+          }
+          try {
+            const res = await fetch('/set_folder', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: `folder=${encodeURIComponent(folder)}`
+            });
+            const text = await res.text();
+            // Refresh folder list and thumbnails
+            loadFolderList();
+            loadRecentPhotos();
+          } catch (e) {
+            console.error('set_folder error', e);
+          }
+        });
+      }
+
+      // Load folder button
+      const loadFolderBtn = document.getElementById('load-folder-btn');
+      if (loadFolderBtn) {
+        loadFolderBtn.addEventListener('click', async () => {
+          const folderInput = document.getElementById('folder-input');
+          const folder = folderInput.value.trim();
+          if (!folder) {
+            alert('Please select a folder');
+            return;
+          }
+          try {
+            const res = await fetch('/set_folder', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: `folder=${encodeURIComponent(folder)}`
+            });
+            const text = await res.text();
+            // Refresh thumbnails to show photos from the loaded folder
+            loadRecentPhotos();
+          } catch (e) {
+            console.error('set_folder error', e);
+          }
+        });
+      }
+
+      // Initialize folder list
+      loadFolderList();
+
+      loadRecentPhotos();
+      setInterval(loadRecentPhotos, 30000);
+
+      // ========================================
+      // WB Panel Toggle
+      // ========================================
+      // NOTE: WB toggle button and section variables are declared in the
+      // "Saturation and Contrast Controls" section below to support
+      // mutual exclusion with other sections
+
+      // ========================================
+      // WB Picker Implementation (Temperature/Tint)
+      // ========================================
+      const wbPickerToggle = document.getElementById('wb-picker-toggle');
+      const wbPickerSlider = document.querySelector('#wb-picker-section .toggle-slider');
+      const wbPickerLabels = Array.from(document.querySelectorAll('#wb-picker-section .toggle-text'));
+      const tempSlider = document.getElementById('temp-slider');
+      const tintSlider = document.getElementById('tint-slider');
+      const tempValue = document.getElementById('temp-value');
+      const tintValue = document.getElementById('tint-value');
+      const resetWbBtn = document.getElementById('reset-wb-btn');
+      const presetButtons = document.querySelectorAll('.wb-preset-btn');
+
+      let wbPickerActive = false;
+      let currentTemp = 5500; // Default daylight
+      let currentTint = 0;    // Neutral
+
+      // Hide the checkbox
+      if (wbPickerToggle) wbPickerToggle.style.display = 'none';
+
+      // ========================================
+      // Temperature to AWB Gains Conversion (IMX708 ct_curve)
+      // ========================================
+      // ct_curve from /usr/share/libcamera/ipa/rpi/pisp/imx708.json
+      const ctCurve = [
+        { temp: 2964, inv_r: 0.7451, inv_b: 0.3213 },
+        { temp: 3610, inv_r: 0.6119, inv_b: 0.4443 },
+        { temp: 4640, inv_r: 0.5168, inv_b: 0.5419 },
+        { temp: 5910, inv_r: 0.4436, inv_b: 0.6229 },
+        { temp: 7590, inv_r: 0.3847, inv_b: 0.6921 }
+      ];
+
+      function kelvinToAwbGains(tempKelvin, tint) {
+        // User interface: Low K = warm output, High K = cool output
+        // But ct_curve is: Low K = gains for warm LIGHT (adds blue)
+        // So we INVERT to make UI intuitive
+
+        // Clamp temperature to valid range
+        tempKelvin = Math.max(ctCurve[0].temp, Math.min(ctCurve[ctCurve.length - 1].temp, tempKelvin));
+
+        // INVERT: user wants warm (low K) → use high K gains (adds orange)
+        let minTemp = ctCurve[0].temp;
+        let maxTemp = ctCurve[ctCurve.length - 1].temp;
+        let invertedTemp = minTemp + maxTemp - tempKelvin;
+        invertedTemp = Math.max(minTemp, Math.min(maxTemp, invertedTemp));
+
+        // Find bracketing points in ct_curve using INVERTED temperature
+        let inv_r, inv_b;
+
+        if (invertedTemp <= ctCurve[0].temp) {
+          // Below range - use first point
+          inv_r = ctCurve[0].inv_r;
+          inv_b = ctCurve[0].inv_b;
+        } else if (invertedTemp >= ctCurve[ctCurve.length - 1].temp) {
+          // Above range - use last point
+          inv_r = ctCurve[ctCurve.length - 1].inv_r;
+          inv_b = ctCurve[ctCurve.length - 1].inv_b;
+        } else {
+          // Interpolate between points using reciprocal temperature (mired)
+          let mired = 1000000 / invertedTemp;
+
+          for (let i = 0; i < ctCurve.length - 1; i++) {
+            if (invertedTemp >= ctCurve[i].temp && invertedTemp <= ctCurve[i + 1].temp) {
+              let mired1 = 1000000 / ctCurve[i].temp;
+              let mired2 = 1000000 / ctCurve[i + 1].temp;
+
+              let t = (mired - mired1) / (mired2 - mired1);
+
+              inv_r = ctCurve[i].inv_r + t * (ctCurve[i + 1].inv_r - ctCurve[i].inv_r);
+              inv_b = ctCurve[i].inv_b + t * (ctCurve[i + 1].inv_b - ctCurve[i].inv_b);
+              break;
+            }
+          }
+        }
+
+        // Convert inverse gains to actual gains
+        let redGain = 1.0 / inv_r;
+        let blueGain = 1.0 / inv_b;
+
+        // Apply tint adjustment (green/magenta axis)
+        // Positive tint = more magenta (boost red/blue relative to green)
+        // Negative tint = more green (reduce red/blue relative to green)
+        let tintFactor = 1.0 + (tint / 100.0) * 0.3;
+        redGain *= tintFactor;
+        blueGain *= tintFactor;
+
+        // Clamp to valid range
+        redGain = Math.max(0.5, Math.min(8.0, redGain));
+        blueGain = Math.max(0.5, Math.min(8.0, blueGain));
+
+        console.log(`User temp: ${tempKelvin}K → Inverted: ${invertedTemp}K → Gains R:${redGain.toFixed(2)} B:${blueGain.toFixed(2)}`);
+
+        return {
+          r: Math.round(redGain * 100) / 100,
+          b: Math.round(blueGain * 100) / 100
+        };
+      }
+
+      // ========================================
+      // RGB to Temperature/Tint Conversion (for eyedropper)
+      // ========================================
+      function rgbToTempTint(r, g, b) {
+        // The sampled RGB values show the color cast we need to CORRECT
+        // To neutralize: we need gains that are INVERSE of the color cast
+        // If scene is warm (high R/B ratio), we need COOLER gains (lower temperature)
+
+        // Avoid division by zero
+        if (r < 1 || g < 1 || b < 1) return { temp: 5500, tint: 0 };
+
+        // Calculate gains needed to neutralize the sampled point
+        // To make R=G=B, we need: redGain = G/R, blueGain = G/B
+        let neededRedGain = g / r;
+        let neededBlueGain = g / b;
+
+        // Convert to inverse gains (for matching with ct_curve)
+        let neededInvR = 1.0 / neededRedGain;
+        let neededInvB = 1.0 / neededBlueGain;
+
+        console.log(`RGB: ${r.toFixed(1)}, ${g.toFixed(1)}, ${b.toFixed(1)} → Needed gains: R=${neededRedGain.toFixed(3)}, B=${neededBlueGain.toFixed(3)}`);
+
+        // Find the temperature in ct_curve that matches these inverse gains
+        // We'll use the ratio inv_r/inv_b for matching
+        let targetRatio = neededInvR / neededInvB;
+
+        let bestTemp = ctCurve[0].temp;
+        let minRatioDiff = Infinity;
+
+        for (let i = 0; i < ctCurve.length; i++) {
+          let curveRatio = ctCurve[i].inv_r / ctCurve[i].inv_b;
+          let diff = Math.abs(curveRatio - targetRatio);
+
+          if (diff < minRatioDiff) {
+            minRatioDiff = diff;
+            bestTemp = ctCurve[i].temp;
+          }
+        }
+
+        // Interpolate for better accuracy
+        let closestIdx = ctCurve.findIndex(point => point.temp === bestTemp);
+
+        if (closestIdx > 0 && closestIdx < ctCurve.length - 1) {
+          let prev = ctCurve[closestIdx - 1];
+          let curr = ctCurve[closestIdx];
+          let next = ctCurve[closestIdx + 1];
+
+          let prevRatio = prev.inv_r / prev.inv_b;
+          let currRatio = curr.inv_r / curr.inv_b;
+          let nextRatio = next.inv_r / next.inv_b;
+
+          // Determine interpolation direction
+          if (targetRatio < currRatio && closestIdx > 0) {
+            // Interpolate between prev and curr
+            let t = (targetRatio - prevRatio) / (currRatio - prevRatio);
+            t = Math.max(0, Math.min(1, t));
+
+            let mired1 = 1000000 / prev.temp;
+            let mired2 = 1000000 / curr.temp;
+            let mired = mired1 + t * (mired2 - mired1);
+            bestTemp = Math.round(1000000 / mired / 50) * 50;
+          } else if (targetRatio > currRatio && closestIdx < ctCurve.length - 1) {
+            // Interpolate between curr and next
+            let t = (targetRatio - currRatio) / (nextRatio - currRatio);
+            t = Math.max(0, Math.min(1, t));
+
+            let mired1 = 1000000 / curr.temp;
+            let mired2 = 1000000 / next.temp;
+            let mired = mired1 + t * (mired2 - mired1);
+            bestTemp = Math.round(1000000 / mired / 50) * 50;
+          }
+        }
+
+        // Clamp to valid range
+        bestTemp = Math.max(ctCurve[0].temp, Math.min(ctCurve[ctCurve.length - 1].temp, bestTemp));
+
+        // Calculate tint based on green deviation
+        // At this temperature, what should the gain ratio be?
+        let expectedGains = kelvinToAwbGains(bestTemp, 0);
+
+        // Compare actual needed gains vs expected gains at this temperature
+        // If we need more red/blue gain than expected, scene has green cast (negative tint)
+        // If we need less red/blue gain than expected, scene has magenta cast (positive tint)
+        let avgNeededGain = (neededRedGain + neededBlueGain) / 2;
+        let avgExpectedGain = (expectedGains.r + expectedGains.b) / 2;
+
+        let gainDeviation = (avgNeededGain - avgExpectedGain) / avgExpectedGain;
+
+        // Convert to tint (inverted because deviation direction is opposite of tint direction)
+        let tint = -gainDeviation * 100;
+
+        // Clamp to reasonable range
+        tint = Math.max(-50, Math.min(50, Math.round(tint / 5) * 5));
+
+        console.log(`Calculated: ${bestTemp}K, Tint: ${tint} (gain deviation: ${(gainDeviation * 100).toFixed(1)}%)`);
+
+        return { temp: bestTemp, tint: tint };
+      }
+
+      // ========================================
+      // Apply WB to camera
+      // ========================================
+      async function applyWb(temp, tint) {
+        currentTemp = temp;
+        currentTint = tint;
+
+        // Update slider positions
+        if (tempSlider) tempSlider.value = temp;
+        if (tintSlider) tintSlider.value = tint;
+        if (tempValue) tempValue.textContent = temp;
+        if (tintValue) tintValue.textContent = tint;
+
+        // Convert to AWB gains
+        const gains = kelvinToAwbGains(temp, tint);
+        console.log(`Applying WB: ${temp}K, Tint: ${tint} → R: ${gains.r}, B: ${gains.b}`);
+
+        try {
+          const form = new FormData();
+          form.append('temp', temp);
+          form.append('tint', tint);
+          form.append('r_gain', gains.r);
+          form.append('b_gain', gains.b);
+
+          const resp = await fetch('/apply_wb', { method: 'POST', body: form });
+          const data = await resp.json();
+
+          if (resp.ok) {
+            // Refresh live preview
+            setTimeout(() => {
+              liveImg.src = `${liveImg.src.split('?')[0]}?_=${Date.now()}`;
+            }, 500);
+          } else {
+            console.error('WB apply failed:', data.error);
+          }
+        } catch (err) {
+          console.error('WB apply error:', err);
+        }
+      }
+
+      // ========================================
+      // Slider event handlers
+      // ========================================
+      if (tempSlider) {
+        tempSlider.addEventListener('input', (e) => {
+          const temp = parseInt(e.target.value);
+          tempValue.textContent = temp;
+        });
+
+        tempSlider.addEventListener('change', (e) => {
+          const temp = parseInt(e.target.value);
+          applyWb(temp, currentTint);
+        });
+      }
+
+      if (tintSlider) {
+        tintSlider.addEventListener('input', (e) => {
+          const tint = parseInt(e.target.value);
+          tintValue.textContent = tint;
+        });
+
+        tintSlider.addEventListener('change', (e) => {
+          const tint = parseInt(e.target.value);
+          applyWb(currentTemp, tint);
+        });
+
+        // Double-click to reset tint slider to 0
+        tintSlider.addEventListener('dblclick', () => {
+          tintSlider.value = 0;
+          tintValue.textContent = '0';
+          applyWb(currentTemp, 0);
+        });
+      }
+
+      // Double-click to reset temp slider to default (5500K)
+      if (tempSlider) {
+        tempSlider.addEventListener('dblclick', () => {
+          tempSlider.value = 5500;
+          tempValue.textContent = '5500';
+          applyWb(5500, currentTint);
+        });
+      }
+
+      // ========================================
+      // Preset buttons
+      // ========================================
+      presetButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const temp = parseInt(btn.dataset.temp);
+          const tint = parseInt(btn.dataset.tint);
+          applyWb(temp, tint);
+        });
+      });
+
+      // ========================================
+      // Eyedropper UI
+      // ========================================
+      function updateWbPickerUI() {
+        const isOn = wbPickerToggle && wbPickerToggle.checked;
+        wbPickerActive = isOn;
+        setKnobPositionFor(wbPickerSlider, isOn ? knobMax : knobMin, true);
+
+        wbPickerLabels.forEach(lbl => {
+          if (lbl.classList.contains('left')) {
+            lbl.style.color = isOn ? 'var(--switch-label-inactive)' : 'var(--switch-label-auto-active)';
+          } else if (lbl.classList.contains('right')) {
+            lbl.style.color = isOn ? 'var(--switch-label-manual-active)' : 'var(--switch-label-inactive)';
+          }
+        });
+
+        // Add/remove visual feedback on live preview
+        if (isOn) {
+          liveImg.classList.add('wb-picker-active');
+        } else {
+          liveImg.classList.remove('wb-picker-active');
+        }
+      }
+
+      if (wbPickerToggle) {
+        wbPickerToggle.addEventListener('change', updateWbPickerUI);
+      }
+
+      attachDragToSlider(wbPickerSlider, wbPickerToggle, updateWbPickerUI);
+      updateWbPickerUI();
+
+      // ========================================
+      // Eyedropper click handler
+      // ========================================
+      liveImg.addEventListener('click', async (e) => {
+        if (!wbPickerActive) return;
+
+        // Get click coordinates relative to image
+        const rect = liveImg.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Convert to camera resolution coordinates
+        const imageWidth = liveImg.naturalWidth || 1920;
+        const imageHeight = liveImg.naturalHeight || 1080;
+        const displayWidth = rect.width;
+        const displayHeight = rect.height;
+
+        const cameraX = Math.round((x / displayWidth) * imageWidth);
+        const cameraY = Math.round((y / displayHeight) * imageHeight);
+
+        // Draw visual feedback circle
+        drawWbSampleCircle(x, y);
+
+        // Show sampling message
+        overlay.textContent = "Sampling WB...";
+        overlay.style.opacity = 1;
+
+        try {
+          const form = new FormData();
+          form.append('x', cameraX);
+          form.append('y', cameraY);
+          form.append('image_width', imageWidth);
+          form.append('image_height', imageHeight);
+
+          const resp = await fetch('/sample_wb', { method: 'POST', body: form });
+          const data = await resp.json();
+
+          if (resp.ok && data.r_avg !== undefined && data.g_avg !== undefined && data.b_avg !== undefined) {
+            // Convert sampled RGB to temperature/tint
+            const tempTint = rgbToTempTint(data.r_avg, data.g_avg, data.b_avg);
+            console.log(`Sampled RGB: R=${data.r_avg.toFixed(1)}, G=${data.g_avg.toFixed(1)}, B=${data.b_avg.toFixed(1)}`);
+            console.log(`Calculated: ${tempTint.temp}K, Tint: ${tempTint.tint}`);
+
+            // Apply the calculated WB
+            await applyWb(tempTint.temp, tempTint.tint);
+
+            overlay.textContent = `✅ WB: ${tempTint.temp}K, Tint: ${tempTint.tint}`;
+          } else {
+            overlay.textContent = `❌ ${data.error || 'WB sampling failed'}`;
+          }
+        } catch (err) {
+          console.error('WB sampling error:', err);
+          overlay.textContent = "❌ WB sampling failed";
+        }
+
+        setTimeout(() => overlay.style.opacity = 0, 2000);
+      });
+
+      // Draw visual feedback circle
+      function drawWbSampleCircle(x, y) {
+        // Create canvas overlay if it doesn't exist
+        let canvas = document.getElementById('wb-canvas-overlay');
+        if (!canvas) {
+          canvas = document.createElement('canvas');
+          canvas.id = 'wb-canvas-overlay';
+          canvas.style.position = 'absolute';
+          canvas.style.pointerEvents = 'none';
+          canvas.style.zIndex = '10';
+          const streamContainer = document.querySelector('.stream-container');
+          streamContainer.appendChild(canvas);
+        }
+
+        // Position and size canvas to match live preview
+        const rect = liveImg.getBoundingClientRect();
+        const streamRect = liveImg.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        canvas.style.left = (rect.left - streamRect.left) + 'px';
+        canvas.style.top = (rect.top - streamRect.top) + 'px';
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+
+        // Draw circle
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#1cd1ec';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(x, y, 20, 0, 2 * Math.PI);
+        ctx.stroke();
+
+        // Fade out after 2 seconds
+        setTimeout(() => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }, 2000);
+      }
+
+      // ========================================
+      // Reset WB button handler
+      // ========================================
+      // Lightweight function to fetch only WB data
+      async function fetchWBOnly() {
+        try {
+          const response = await fetch('/camera_metadata');
+          const data = await response.json();
+
+          if (!data.error) {
+            // Camera returns actual WB temp - display it directly
+            // Only update WB sliders and display
+            if (tempSlider && tempValue) {
+              tempSlider.value = data.wb_temp;
+              tempValue.textContent = data.wb_temp;
+              currentTemp = data.wb_temp;
+            }
+            if (tintSlider && tintValue) {
+              tintSlider.value = data.wb_tint;
+              tintValue.textContent = data.wb_tint;
+              currentTint = data.wb_tint;
+            }
+            if (settingsWB) {
+              settingsWB.textContent = `${data.wb_temp}K`;
+            }
+            if (settingsTint) {
+              settingsTint.textContent = data.wb_tint > 0 ? `+${data.wb_tint}` : data.wb_tint;
+            }
+
+            console.log(`Synced WB from camera: ${data.wb_temp}K, Tint: ${data.wb_tint}`);
+            return true;
+          }
+          return false;
+        } catch (err) {
+          console.error('Failed to fetch WB:', err);
+          return false;
+        }
+      }
+
+      if (resetWbBtn) {
+        resetWbBtn.addEventListener('click', async () => {
+          try {
+            const resp = await fetch('/reset_wb', { method: 'POST' });
+            const data = await resp.json();
+
+            if (resp.ok) {
+              overlay.textContent = "✅ WB reset to auto - Syncing...";
+              overlay.style.opacity = 1;
+
+              // Wait a bit for camera to settle with auto WB, then fetch only WB data
+              setTimeout(async () => {
+                const success = await fetchWBOnly();
+
+                if (success) {
+                  overlay.textContent = "✅ WB synced to auto";
+                } else {
+                  overlay.textContent = "✅ WB reset (manual sync needed)";
+                }
+
+                // Refresh live preview
+                setTimeout(() => {
+                  liveImg.src = `${liveImg.src.split('?')[0]}?_=${Date.now()}`;
+                }, 500);
+
+                setTimeout(() => overlay.style.opacity = 0, 2000);
+              }, 800);
+            } else {
+              overlay.textContent = `❌ ${data.error || 'WB reset failed'}`;
+              overlay.style.opacity = 1;
+              setTimeout(() => overlay.style.opacity = 0, 2000);
+            }
+          } catch (err) {
+            console.error('WB reset error:', err);
+            overlay.textContent = "❌ WB reset failed";
+            overlay.style.opacity = 1;
+            setTimeout(() => overlay.style.opacity = 0, 2000);
+          }
+        });
+      }
+
+      // =====================================================================
+      // New Footer Tab System
+      // =====================================================================
+      const footerTabBtns = document.querySelectorAll('.footer-tab-btn');
+      const footerSections = document.querySelectorAll('.footer-section');
+      const footerContent = document.querySelector('.footer-content');
+      const satSlider = document.getElementById('sat-slider');
+      const contrastSlider = document.getElementById('contrast-slider');
+      const satValue = document.getElementById('sat-value');
+      const contrastValue = document.getElementById('contrast-value');
+      const satPresets = document.querySelectorAll('#saturation-section .settings-section-presets button');
+      const contrastPresets = document.querySelectorAll('#contrast-section .settings-section-presets button');
+
+      let satDebounceTimer = null;
+      let contrastDebounceTimer = null;
+      let currentActiveTab = 'thumbnails'; // Default active tab
+
+      // Function to switch tabs
+      function switchTab(sectionId) {
+        // If clicking the same tab, toggle footer open/closed
+        if (currentActiveTab === sectionId) {
+          const isExpanded = footerContent.classList.contains('expanded');
+          footerContent.classList.toggle('expanded');
+
+          // Update button active state based on expanded state
+          footerTabBtns.forEach(btn => {
+            if (btn.dataset.section === sectionId) {
+              btn.classList.toggle('active', !isExpanded);
+            }
+          });
+
+          // If closing footer, turn off eyedropper
+          if (isExpanded && wbPickerActive && wbPickerToggle) {
+            wbPickerToggle.checked = false;
+            updateWbPickerUI();
+          }
+
+          // If closing, keep the same tab as active for next open
+          return;
+        }
+
+        // Switching to different tab - turn off eyedropper if leaving WB tab
+        if (currentActiveTab === 'wb' && wbPickerActive && wbPickerToggle) {
+          wbPickerToggle.checked = false;
+          updateWbPickerUI();
+        }
+
+        // Switching to different tab
+        currentActiveTab = sectionId;
+
+        // Remove active class from all tabs and sections
+        footerTabBtns.forEach(btn => btn.classList.remove('active'));
+        footerSections.forEach(section => section.classList.remove('active'));
+
+        // Add active class to clicked tab and corresponding section
+        const activeBtn = document.querySelector(`[data-section="${sectionId}"]`);
+        const activeSection = document.getElementById(`${sectionId}-section`) ||
+                              document.getElementById(`${sectionId === 'wb' ? 'wb-picker-section' : sectionId + '-section'}`);
+
+        if (activeBtn) activeBtn.classList.add('active');
+        if (activeSection) activeSection.classList.add('active');
+
+        // Ensure footer is expanded when switching tabs
+        footerContent.classList.add('expanded');
+      }
+
+      // Add click handlers to all tab buttons
+      footerTabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sectionId = btn.dataset.section;
+          switchTab(sectionId);
+        });
+      });
+
+      // Apply saturation function
+      async function applySaturation(value) {
+        try {
+          const formData = new FormData();
+          formData.append('saturation', value);
+
+          const response = await fetch('/apply_saturation', {
+            method: 'POST',
+            body: formData
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            console.error('Failed to apply saturation:', data.error);
+            return;
+          }
+
+          // Refresh live preview
+          setTimeout(() => {
+            liveImg.src = `${liveImg.src.split('?')[0]}?_=${Date.now()}`;
+          }, 500);
+
+        } catch (error) {
+          console.error('Error applying saturation:', error);
+        }
+      }
+
+      // Apply contrast function
+      async function applyContrast(value) {
+        try {
+          const formData = new FormData();
+          formData.append('contrast', value);
+
+          const response = await fetch('/apply_contrast', {
+            method: 'POST',
+            body: formData
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            console.error('Failed to apply contrast:', data.error);
+            return;
+          }
+
+          // Refresh live preview
+          setTimeout(() => {
+            liveImg.src = `${liveImg.src.split('?')[0]}?_=${Date.now()}`;
+          }, 500);
+
+        } catch (error) {
+          console.error('Error applying contrast:', error);
+        }
+      }
+
+      // Saturation slider handler
+      satSlider.addEventListener('input', (e) => {
+        const value = parseInt(e.target.value);
+        satValue.textContent = value;
+
+        // Debounce API calls
+        clearTimeout(satDebounceTimer);
+        satDebounceTimer = setTimeout(() => {
+          applySaturation(value);
+        }, 300);
+      });
+
+      // Contrast slider handler
+      contrastSlider.addEventListener('input', (e) => {
+        const value = parseInt(e.target.value);
+        contrastValue.textContent = value;
+
+        // Debounce API calls
+        clearTimeout(contrastDebounceTimer);
+        contrastDebounceTimer = setTimeout(() => {
+          applyContrast(value);
+        }, 300);
+      });
+
+      // Saturation preset buttons
+      satPresets.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const value = parseInt(btn.getAttribute('data-value'));
+          satSlider.value = value;
+          satValue.textContent = value;
+          applySaturation(value);
+        });
+      });
+
+      // Contrast preset buttons
+      contrastPresets.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const value = parseInt(btn.getAttribute('data-value'));
+          contrastSlider.value = value;
+          contrastValue.textContent = value;
+          applyContrast(value);
+        });
+      });
+
+      // Double-click to reset saturation slider to 0
+      satSlider.addEventListener('dblclick', () => {
+        satSlider.value = 0;
+        satValue.textContent = '0';
+        applySaturation(0);
+      });
+
+      // Double-click to reset contrast slider to 0
+      contrastSlider.addEventListener('dblclick', () => {
+        contrastSlider.value = 0;
+        contrastValue.textContent = '0';
+        applyContrast(0);
+      });
+
+      // =====================================================================
+      // Camera Settings Display - Manual Refresh
+      // =====================================================================
+      const cameraSettings = document.getElementById('camera-settings');
+      const settingsISO = document.getElementById('settings-iso');
+      const settingsSpeed = document.getElementById('settings-speed');
+      const settingsWB = document.getElementById('settings-wb');
+      const settingsTint = document.getElementById('settings-tint');
+      const fetchSettingsBtn = document.getElementById('fetch-settings-btn');
+
+      async function fetchCameraMetadata() {
+        try {
+          // Disable button during fetch
+          if (fetchSettingsBtn) {
+            fetchSettingsBtn.disabled = true;
+            fetchSettingsBtn.textContent = 'Fetching...';
+          }
+
+          const response = await fetch('/camera_metadata');
+          const data = await response.json();
+
+          if (data.error) {
+            // Show error state
+            cameraSettings.classList.add('error');
+            settingsISO.textContent = '--';
+            settingsSpeed.textContent = '--';
+            settingsWB.textContent = '--';
+            settingsTint.textContent = '--';
+            console.error('Metadata error:', data.error);
+            return;
+          }
+
+          // Update UI with new values
+          cameraSettings.classList.remove('error');
+          settingsISO.textContent = data.iso;
+          settingsSpeed.textContent = data.shutter_speed;
+          settingsWB.textContent = `${data.wb_temp}K`;
+          settingsTint.textContent = data.wb_tint > 0 ? `+${data.wb_tint}` : data.wb_tint;
+
+          // Update WB sliders to match actual camera settings (especially important for Auto WB)
+          // Camera returns actual WB temp - display it directly
+          if (tempSlider && tempValue) {
+            tempSlider.value = data.wb_temp;
+            tempValue.textContent = data.wb_temp;
+            currentTemp = data.wb_temp;
+          }
+          if (tintSlider && tintValue) {
+            tintSlider.value = data.wb_tint;
+            tintValue.textContent = data.wb_tint;
+            currentTint = data.wb_tint;
+          }
+
+          console.log(`Synced WB sliders to camera: ${data.wb_temp}K, Tint: ${data.wb_tint}`);
+
+          // Refresh live preview after fetching metadata
+          setTimeout(() => {
+            liveImg.src = `${liveImg.src.split('?')[0]}?_=${Date.now()}`;
+          }, 800);
+
+        } catch (err) {
+          console.error('Failed to fetch camera metadata:', err);
+          cameraSettings.classList.add('error');
+          settingsISO.textContent = '--';
+          settingsSpeed.textContent = '--';
+          settingsWB.textContent = '--';
+          settingsTint.textContent = '--';
+        } finally {
+          // Re-enable button
+          if (fetchSettingsBtn) {
+            fetchSettingsBtn.disabled = false;
+            fetchSettingsBtn.textContent = 'Refresh';
+          }
+        }
+      }
+
+      // Add click handler to fetch button
+      if (fetchSettingsBtn) {
+        fetchSettingsBtn.addEventListener('click', fetchCameraMetadata);
+      }
+
+      // Initialize turntable status on page load
+      updateTurntableStatus();
+    });
+
+    // ===================================================================
+    // TURNTABLE CONTROL FUNCTIONS (Global scope for onclick handlers)
+    // ===================================================================
+
+    // Update turntable status periodically
+    setInterval(updateTurntableStatus, 3000);
+
+    async function updateTurntableStatus() {
+      try {
+        const response = await fetch('/turntable/status');
+        const data = await response.json();
+
+        if (data.position_degrees !== undefined) {
+          document.getElementById('tt-position').textContent = Math.round(data.position_degrees);
+          document.getElementById('tt-state').textContent = data.is_moving ? 'MOVING' : 'IDLE';
+          document.getElementById('tt-state').style.color = data.is_moving ? 'var(--wb-hover)' : 'var(--wb-accent)';
+        } else {
+          document.getElementById('tt-position').textContent = '---';
+          document.getElementById('tt-state').textContent = 'Offline';
+          document.getElementById('tt-state').style.color = '#FF0000';
+        }
+      } catch (error) {
+        document.getElementById('tt-state').textContent = 'Error';
+        document.getElementById('tt-state').style.color = '#FF0000';
+      }
+    }
+
+    async function rotateTurntable(direction, degrees) {
+      try {
+        let endpoint;
+        const formData = new FormData();
+
+        if (direction === 'home') {
+          endpoint = '/turntable/home';
+        } else if (direction === 'left') {
+          endpoint = '/turntable/left';
+          formData.append('degrees', degrees);
+        } else if (direction === 'right') {
+          endpoint = '/turntable/right';
+          formData.append('degrees', degrees);
+        }
+
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.status === 'error') {
+          alert('Turntable error: ' + result.message);
+        }
+
+        // Update status immediately
+        setTimeout(updateTurntableStatus, 500);
+      } catch (error) {
+        alert('Failed to control turntable: ' + error.message);
+      }
+    }
+
+    async function setHomePosition() {
+      if (!confirm('Set current position as home (0°)?')) return;
+
+      try {
+        const response = await fetch('/turntable/set_home', { method: 'POST' });
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          alert('Home position set!');
+          updateTurntableStatus();
+        } else {
+          alert('Error: ' + result.message);
+        }
+      } catch (error) {
+        alert('Failed to set home: ' + error.message);
+      }
+    }
+
+    async function capture360Sequence() {
+      const photoCount = document.getElementById('photo-count-360').value;
+      const btn = document.getElementById('capture-360-btn');
+      const progress = document.getElementById('sequence-progress');
+      const overlay = document.getElementById('capture-overlay');
+
+      btn.disabled = true;
+      btn.textContent = 'Capturing...';
+      progress.style.display = 'block';
+      document.getElementById('sequence-total').textContent = photoCount;
+
+      // Show overlay on live view
+      overlay.textContent = `📸 Capturing 360° sequence: ${photoCount} photos`;
+      overlay.style.opacity = 1;
+
+      try {
+        const formData = new FormData();
+        formData.append('photo_count', photoCount);
+        formData.append('format', 'jpeg');
+
+        const response = await fetch('/capture_360_sequence', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          overlay.textContent = `✅ Success! ${result.photo_count} photos captured`;
+          setTimeout(() => overlay.style.opacity = 0, 3000);
+          // Reload video feed after sequence
+          const liveImg = document.getElementById('live-preview');
+          if (liveImg) {
+            liveImg.src = `/video_feed?_=${Date.now()}`;
+          }
+        } else {
+          overlay.textContent = `❌ Error: ${result.error}`;
+          setTimeout(() => overlay.style.opacity = 0, 2000);
+          alert('Error: ' + result.error);
+        }
+      } catch (error) {
+        overlay.textContent = '❌ Capture failed';
+        setTimeout(() => overlay.style.opacity = 0, 2000);
+        alert('Failed to capture sequence: ' + error.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🎯 Capture Sequence';
+        progress.style.display = 'none';
+      }
+    }
+
+    async function record360Video() {
+      const duration = document.getElementById('video-duration-360').value;
+      const loopMode = document.getElementById('video-loop-mode').checked;
+      const btn = document.getElementById('record-360-btn');
+      const progress = document.getElementById('video-progress-360');
+      const overlay = document.getElementById('capture-overlay');
+
+      btn.disabled = true;
+      btn.textContent = 'Recording...';
+      progress.style.display = 'block';
+
+      // Show overlay on live view with countdown
+      if (loopMode) {
+        overlay.textContent = `🎥 Preparing loop video: ${duration}s`;
+      } else {
+        overlay.textContent = `🎥 Recording 360° video: ${duration}s`;
+      }
+      overlay.style.opacity = 1;
+
+      let timeRemaining = parseInt(duration);
+      const countdown = setInterval(() => {
+        timeRemaining--;
+        document.getElementById('video-time-remaining').textContent = timeRemaining;
+        overlay.textContent = `🎥 Recording 360° video: ${timeRemaining}s remaining`;
+        if (timeRemaining <= 0) {
+          clearInterval(countdown);
+          overlay.textContent = '🎥 Converting to MP4...';
+        }
+      }, 1000);
+
+      try {
+        const formData = new FormData();
+        formData.append('duration', duration);
+        formData.append('loop_mode', loopMode ? '1' : '0');
+
+        const response = await fetch('/record_360_video', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        clearInterval(countdown);
+
+        if (response.ok) {
+          overlay.textContent = `✅ Success! Video saved: ${result.mp4}`;
+          setTimeout(() => overlay.style.opacity = 0, 3000);
+          // Reload video feed after recording
+          const liveImg = document.getElementById('live-preview');
+          if (liveImg) {
+            liveImg.src = `/video_feed?_=${Date.now()}`;
+          }
+        } else {
+          overlay.textContent = `❌ Error: ${result.error}`;
+          setTimeout(() => overlay.style.opacity = 0, 2000);
+          alert('Error: ' + result.error);
+        }
+      } catch (error) {
+        clearInterval(countdown);
+        overlay.textContent = '❌ Recording failed';
+        setTimeout(() => overlay.style.opacity = 0, 2000);
+        alert('Failed to record video: ' + error.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🎥 Record 360°';
+        progress.style.display = 'none';
+      }
+    }
+
+    async function emergencyStop() {
+      const overlay = document.getElementById('capture-overlay');
+
+      try {
+        // Stop turntable motor
+        const response = await fetch('/turntable/stop', { method: 'POST' });
+        const result = await response.json();
+
+        // Kill any running camera processes
+        await fetch('/kill_camera_processes', { method: 'POST' }).catch(() => {});
+
+        // Reset UI elements
+        overlay.textContent = '🛑 STOPPED';
+        overlay.style.opacity = 1;
+        setTimeout(() => overlay.style.opacity = 0, 2000);
+
+        // Reset buttons
+        const capture360Btn = document.getElementById('capture-360-btn');
+        const record360Btn = document.getElementById('record-360-btn');
+        if (capture360Btn) {
+          capture360Btn.disabled = false;
+          capture360Btn.textContent = '🎯 Capture Sequence';
+        }
+        if (record360Btn) {
+          record360Btn.disabled = false;
+          record360Btn.textContent = '🎥 Record 360°';
+        }
+
+        // Hide progress indicators
+        const sequenceProgress = document.getElementById('sequence-progress');
+        const videoProgress = document.getElementById('video-progress-360');
+        if (sequenceProgress) sequenceProgress.style.display = 'none';
+        if (videoProgress) videoProgress.style.display = 'none';
+
+        // Restart video feed
+        const liveImg = document.getElementById('live-preview');
+        if (liveImg) {
+          setTimeout(() => {
+            liveImg.src = `/video_feed?_=${Date.now()}`;
+          }, 1000);
+        }
+
+        if (result.status === 'success') {
+          alert('Emergency stop executed!\n\nTurntable stopped and camera processes killed.\nLive view will restart.');
+          updateTurntableStatus();
+        }
+      } catch (error) {
+        overlay.textContent = '⚠️ Stop error';
+        setTimeout(() => overlay.style.opacity = 0, 2000);
+        alert('Failed to stop: ' + error.message);
+      }
+    }
+
+    </script>
+
+</body>
+</html>

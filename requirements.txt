@@ -1,0 +1,13 @@
+# Manège - Python Dependencies
+
+# Web Framework
+Flask>=2.3.0
+
+# Image Processing
+Pillow>=10.0.0
+
+# HTTP Requests (for ESP32 communication)
+requests>=2.31.0
+
+# Note: libcamera tools are system packages, not Python packages
+# Install via: sudo apt install libcamera-apps

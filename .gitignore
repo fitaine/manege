@@ -1,0 +1,83 @@
+# Configuration files with secrets
+config.py
+config.h
+.env
+secrets.json
+*.secret
+
+# Generated photos (but not static UI images)
+app/static/photos/*
+!app/static/photos/.gitkeep
+
+# Photos in general locations
+*.jpg
+*.jpeg
+*.raw
+*.dng
+*.h264
+*.mp4
+
+# But allow PNG/JPG in specific app directories
+!app/static/*.png
+!app/static/images/*.png
+!app/static/images/*.jpg
+
+# Logs
+*.log
+flask.log
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Backups
+*.bak
+*.backup
+*~
+BACKUP/
+.backup/
+
+# OS files
+.DS_Store
+._*
+Thumbs.db
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Personal/business files
+TODO_PERSONAL.md
+pricing*.xlsx
+pricing*.csv
+suppliers*.md
+customer*.md
+business-plan*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
