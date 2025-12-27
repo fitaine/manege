@@ -113,7 +113,7 @@ pip3 install requests
 ```
 
 ### 7. Update Flask App
-The turntable features are already integrated in `/home/florine/Documents/app.py`
+The turntable features are already integrated in `/home/yourusername/Documents/app.py`
 
 Verify the ESP32 IP address matches:
 ```python
@@ -122,10 +122,10 @@ TURNTABLE_ENABLED = True
 ```
 
 ### 8. Add UI to Web Interface
-The turntable UI snippet is in `/home/florine/Documents/turntable_ui_snippet.html`
+The turntable UI snippet is in `/home/yourusername/Documents/turntable_ui_snippet.html`
 
 To add it to your photobox interface:
-1. Open `/home/florine/Documents/templates/index.html`
+1. Open `/home/yourusername/Documents/templates/index.html`
 2. Find a suitable location (e.g., after the camera settings section)
 3. Copy the HTML section from `turntable_ui_snippet.html`
 4. Copy the JavaScript section into your existing `<script>` block
@@ -261,9 +261,9 @@ const int SPEED_FAST = 1000;
 
 ## Support Files
 
-- Firmware: `/home/florine/Documents/scripts/esp32_turntable.ino`
-- Flask API: `/home/florine/Documents/app.py`
-- UI Snippet: `/home/florine/Documents/turntable_ui_snippet.html`
-- This guide: `/home/florine/Documents/TURNTABLE_SETUP.md`
+- Firmware: `/home/yourusername/Documents/scripts/esp32_turntable.ino`
+- Flask API: `/home/yourusername/Documents/app.py`
+- UI Snippet: `/home/yourusername/Documents/turntable_ui_snippet.html`
+- This guide: `/home/yourusername/Documents/TURNTABLE_SETUP.md`
 
 Happy shooting! 📷🔄

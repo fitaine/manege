@@ -170,7 +170,7 @@ Check:
 3. Firewall not blocking port
 
 Restart stream:
-cd /home/florine/manege
+cd /home/yourusername/manege
 ./scripts/stop_cam.sh
 ./scripts/start_cam.sh
 

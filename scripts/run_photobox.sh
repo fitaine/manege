@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/florine/Documents
+cd /home/yourusername/Documents
 
 # Kill old Flask server if still running
 pkill -f app.py

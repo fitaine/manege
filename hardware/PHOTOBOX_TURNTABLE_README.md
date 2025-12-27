@@ -56,7 +56,7 @@ Your photobox is a complete automated photography system for capturing basketry 
 - **Network**:
   - Flask app: <PI_IP_ADDRESS>:5000
   - ESP32 turntable: <ESP32_IP_ADDRESS> (update if needed)
-- **Photo storage**: `/home/florine/Pictures/` with date-organized folders
+- **Photo storage**: `/home/yourusername/Pictures/` with date-organized folders
 
 ---
 
@@ -310,7 +310,7 @@ ACCEL_FAST = 500      // Return home (still gentle)
 
 ## Software Components
 
-### Backend: Flask App (`/home/florine/Documents/app.py`)
+### Backend: Flask App (`/home/yourusername/Documents/app.py`)
 
 **Key Functions:**
 - `video_feed()` - MJPEG live stream
@@ -327,7 +327,7 @@ ACCEL_FAST = 500      // Return home (still gentle)
 - Subfolder scanning for thumbnails
 - Fixed HDR/manual exposure conflicts
 
-### Frontend: Web UI (`/home/florine/Documents/templates/index.html`)
+### Frontend: Web UI (`/home/yourusername/Documents/templates/index.html`)
 
 **Structure:**
 - **Left Panel**: Live preview, capture overlay, photo modal
@@ -341,7 +341,7 @@ ACCEL_FAST = 500      // Return home (still gentle)
 - `createCarousel()` - Dynamic control carousels
 - `updateLiveFocus()`, `updateLiveExposure()` - Real-time settings
 
-### Firmware: ESP32 (`/home/florine/Documents/scripts/esp32_turntable/esp32_turntable.ino`)
+### Firmware: ESP32 (`/home/yourusername/Documents/scripts/esp32_turntable/esp32_turntable.ino`)
 
 **HTTP Endpoints:**
 - `/status` - Get position and state
@@ -412,8 +412,8 @@ ACCEL_FAST = 500      // Return home (still gentle)
 
 5. **Backup configuration**:
    ```bash
-   cp /home/florine/Documents/app.py /home/florine/Documents/app.py.backup
-   cp /home/florine/Documents/scripts/esp32_turntable/esp32_turntable.ino /home/florine/Documents/scripts/esp32_turntable/esp32_turntable.ino.backup
+   cp /home/yourusername/Documents/app.py /home/yourusername/Documents/app.py.backup
+   cp /home/yourusername/Documents/scripts/esp32_turntable/esp32_turntable.ino /home/yourusername/Documents/scripts/esp32_turntable/esp32_turntable.ino.backup
    ```
 
 ### 🟢 Nice to Have - Future Enhancements
@@ -450,32 +450,32 @@ ACCEL_FAST = 500      // Return home (still gentle)
 ### Core Files
 ```
 Flask Backend:
-  /home/florine/Documents/app.py
+  /home/yourusername/Documents/app.py
 
 Web UI:
-  /home/florine/Documents/templates/index.html
+  /home/yourusername/Documents/templates/index.html
 
 ESP32 Firmware:
-  /home/florine/Documents/scripts/esp32_turntable/esp32_turntable.ino
+  /home/yourusername/Documents/scripts/esp32_turntable/esp32_turntable.ino
 
 Photo Storage:
-  /home/florine/Pictures/YYYY-MM-DD/
-  /home/florine/Pictures/YYYY-MM-DD/360seq_YYYYMMDD_HHMMSS/
+  /home/yourusername/Pictures/YYYY-MM-DD/
+  /home/yourusername/Pictures/YYYY-MM-DD/360seq_YYYYMMDD_HHMMSS/
 
 Current Folder Tracker:
-  /home/florine/Pictures/current_folder.txt
+  /home/yourusername/Pictures/current_folder.txt
 ```
 
 ### Documentation
 ```
 Main README:
-  /home/florine/Documents/PHOTOBOX_TURNTABLE_README.md (this file)
+  /home/yourusername/Documents/PHOTOBOX_TURNTABLE_README.md (this file)
 
 Setup Guide:
-  /home/florine/Documents/TURNTABLE_SETUP.md
+  /home/yourusername/Documents/TURNTABLE_SETUP.md
 
 TODO List:
-  /home/florine/Documents/TODO.md (to be created)
+  /home/yourusername/Documents/TODO.md (to be created)
 
 Session Notes:
   See conversation history for detailed implementation notes
@@ -484,8 +484,8 @@ Session Notes:
 ### Scripts
 ```
 Flask Startup:
-  /home/florine/Documents/scripts/start_webapp.sh
-  /home/florine/Documents/scripts/run_photobox.sh
+  /home/yourusername/Documents/scripts/start_webapp.sh
+  /home/yourusername/Documents/scripts/run_photobox.sh
 ```
 
 ---
@@ -529,7 +529,7 @@ preposition_time = 2.0       # Adjust if needed
 | Turntable shows "Offline" | Check ESP32 power, WiFi, verify IP <ESP32_IP_ADDRESS> |
 | Motor not moving | Verify wiring, check VMOT voltage, test with `/status` |
 | Jerky rotation | Upload latest firmware with 1/32 microstepping |
-| Photos not in thumbnails | Click thumbnails tab, check `/home/florine/Pictures/` |
+| Photos not in thumbnails | Click thumbnails tab, check `/home/yourusername/Pictures/` |
 | Video too fast/slow | Change speed preset or adjust firmware constants |
 | Loop mode not working | Upload latest ESP32 firmware with `handleVideo360Loop()` |
 | Object not at start after loop | Adjust `preposition_time` in app.py |
@@ -577,13 +577,13 @@ curl -X POST http://<ESP32_IP_ADDRESS>/preset/45
 ### Photos
 ```bash
 # List recent photos
-ls -lth /home/florine/Pictures/2025-11-28/ | head
+ls -lth /home/yourusername/Pictures/2025-11-28/ | head
 
 # Count photos in sequences
-find /home/florine/Pictures/ -name "360seq_*" -type d | wc -l
+find /home/yourusername/Pictures/ -name "360seq_*" -type d | wc -l
 
 # Check disk space
-df -h /home/florine/Pictures/
+df -h /home/yourusername/Pictures/
 ```
 
 ---

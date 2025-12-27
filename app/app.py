@@ -1,6 +1,6 @@
 from flask import Flask, Response, render_template, jsonify, send_from_directory, make_response, request
 import sys
-sys.path.insert(0, "/home/florine/manege")
+sys.path.insert(0, "/home/yourusername/manege")
 from config import TURNTABLE_IP, FLASK_HOST, FLASK_PORT, PHOTOS_BASE_DIR, STATIC_PHOTOS_DIR, ENABLE_TURNTABLE
 import subprocess
 import os
@@ -189,7 +189,7 @@ def capture_photo():
 
     try:
         BASE_PHOTO_DIR = PHOTOS_BASE_DIR  # From config.py
-        current_folder_file = "/home/florine/Pictures/current_folder.txt"
+        current_folder_file = "/home/yourusername/Pictures/current_folder.txt"
 
         # --- Load destination folder ---
         dest_folder = os.path.join(BASE_PHOTO_DIR, "default")
@@ -325,7 +325,7 @@ def capture_photo():
 @app.route('/photos/<path:filename>')
 def serve_photo(filename):
     # Get current folder (read from file for most up-to-date path)
-    current_folder_file = "/home/florine/Pictures/current_folder.txt"
+    current_folder_file = "/home/yourusername/Pictures/current_folder.txt"
     folder_path = os.path.join(BASE_PHOTO_DIR, "default")
     if os.path.exists(current_folder_file):
         with open(current_folder_file) as f:
@@ -353,7 +353,7 @@ def recent_photos():
         return jsonify(recent_photos_cache["photos"])
 
     # Get current folder (read from file for most up-to-date path)
-    current_folder_file = "/home/florine/Pictures/current_folder.txt"
+    current_folder_file = "/home/yourusername/Pictures/current_folder.txt"
     folder_path = os.path.join(BASE_PHOTO_DIR, "default")
     if os.path.exists(current_folder_file):
         with open(current_folder_file) as f:
@@ -863,7 +863,7 @@ def set_folder():
         os.makedirs(folder_path, exist_ok=True)
         current_folder_path = folder_path
         # Optional: persist it to a text file
-        with open('/home/florine/Pictures/current_folder.txt', 'w') as f:
+        with open('/home/yourusername/Pictures/current_folder.txt', 'w') as f:
             f.write(current_folder_path)
         return safe_name
     else:
@@ -1137,7 +1137,7 @@ def capture_360_sequence():
 
         # Create subfolder for this sequence
         BASE_PHOTO_DIR = PHOTOS_BASE_DIR  # From config.py
-        current_folder_file = "/home/florine/Pictures/current_folder.txt"
+        current_folder_file = "/home/yourusername/Pictures/current_folder.txt"
 
         dest_folder = os.path.join(BASE_PHOTO_DIR, "default")
         if os.path.exists(current_folder_file):
@@ -1266,7 +1266,7 @@ def record_360_video():
 
         # Prepare destination
         BASE_PHOTO_DIR = PHOTOS_BASE_DIR  # From config.py
-        current_folder_file = "/home/florine/Pictures/current_folder.txt"
+        current_folder_file = "/home/yourusername/Pictures/current_folder.txt"
 
         dest_folder = os.path.join(BASE_PHOTO_DIR, "default")
         if os.path.exists(current_folder_file):
@@ -1413,5 +1413,5 @@ def record_360_video():
 # Run App
 # ---------------------------------------------------------------------
 if __name__ == '__main__':
-    # Change '0.0.0.0' to '192.168.2.5' to bind to ethernet only
+    # Change '0.0.0.0' to '<PI_IP_ADDRESS>' to bind to ethernet only
     app.run(host=FLASK_HOST, port=FLASK_PORT, threaded=True)  # From config.py

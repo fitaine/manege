@@ -154,6 +154,6 @@
 ═══════════════════════════════════════════════════════════════════════
 
   For detailed instructions, see:
-  /home/florine/Documents/TURNTABLE_SETUP.md
+  /home/yourusername/Documents/TURNTABLE_SETUP.md
 
 ═══════════════════════════════════════════════════════════════════════

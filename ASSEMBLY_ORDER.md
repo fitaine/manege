@@ -56,17 +56,28 @@ Before starting, ensure you have:
 
 ---
 
-## 3. Mechanical Assembly
+## 3. 3D Printing
+
+**Goal:** Protect the hardware from outside
+
+**Print Steps:**
+- Manège's base
+- Top with honeycomb grid
+- Gear
+- Ring gear
+- Raspi bottom case
+- Raspi top case
+
+## 4. Mechanical Assembly
 
 **Goal:** Build stable rotating platform
 
 **Steps:**
 
-- Mount 8-inch lazy susan bearing to base
 - Install NEMA 17 motor mount
-- Add timing belt system (16T/160T pulleys, 10:1 ratio)
-- Test rotation - should be smooth, no binding
-- Adjust belt tension
+- Install boards and converters
+- Wire and Solder (Tricky part)
+- Screw the ring gear and place the gear on the NEAM's shaft.
 
 **Success criteria:**
 - Turntable rotates smoothly by hand
@@ -76,7 +87,7 @@ Before starting, ensure you have:
 
 ---
 
-## 4. Software Setup
+## 5. Software Setup
 
 **Goal:** Get Manège code running
 
@@ -96,7 +107,7 @@ Before starting, ensure you have:
 
 ---
 
-## 5. Final Integration
+## 6. Final Integration
 
 **Goal:** Complete system assembly and calibration
 
@@ -107,7 +118,6 @@ Before starting, ensure you have:
 - Organize wiring with cable ties and heat shrink
 - Calibrate turntable home position
 - Test full 360° photo sequence
-- Add enclosure (optional)
 
 **Success criteria:**
 - All components powered correctly

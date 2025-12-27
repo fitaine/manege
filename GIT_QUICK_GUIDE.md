@@ -6,7 +6,7 @@ Simple commands for updating your GitHub repository.
 
 ### 1. Check what changed
 ```bash
-cd /home/florine/manege
+cd /home/yourusername/manege
 git status
 ```
 
@@ -36,7 +36,7 @@ git push
 
 ### After a coding session with Claude:
 ```bash
-cd /home/florine/manege
+cd /home/yourusername/manege
 git add .
 git commit -m "Add focus stacking feature"
 git push
@@ -126,7 +126,7 @@ Example commit messages:
 
 **On Pi:**
 ```bash
-cd /home/florine/manege
+cd /home/yourusername/manege
 git status
 git log --oneline -5  # Last 5 commits
 ```
