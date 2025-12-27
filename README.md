@@ -16,7 +16,9 @@ Open-source automated photography system combining Raspberry Pi camera with ESP3
 - Continuous Live Stream
 - Manual focus/exposure/white balance
 - HDR capture mode
+- Led powering system
 - Precision turntable (0.005625°/step)
+- PoE Hat for a clean one cable camera solution (data + power)
 
 ## Structure
 
