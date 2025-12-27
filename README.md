@@ -62,7 +62,7 @@ Thank you to veebch for the original inspiration and ESP32 turntable foundation!
 
 Camera Module V3 requires libcamera commands. The old picamera/raspistill/raspivid will NOT work.
 
-See [docs/CAMERA_SETUP.md](docs/CAMERA_SETUP.md) for:
+See [app/CAMERA_SETUP.md](app/CAMERA_SETUP.md) for:
 - Why we use libcamera
 - Installation and testing
 - Common issues and solutions
