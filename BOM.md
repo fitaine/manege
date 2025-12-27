@@ -114,41 +114,6 @@ Earlier Pi models (4, 3, etc.) require camera multiplexer for dual cameras.
 
 ---
 
-## Assembly Order
-
-**Recommended build sequence:**
-
-1. **Electronics breadboard test**
-   - Wire ESP32 + DRV8825 + motor
-   - Test basic rotation
-   - Verify power supply voltages
-
-2. **Raspberry Pi setup**
-   - Install Pi OS
-   - Connect both cameras
-   - Test camera detection
-   - Install libcamera-apps
-
-3. **Mechanical assembly**
-   - Mount motor to base
-   - Install lazy susan bearing
-   - Add timing belt/pulleys
-   - Test rotation smoothness
-
-4. **Software setup**
-   - Clone Manège repository
-   - Configure network settings
-   - Upload ESP32 firmware
-   - Test web interface
-
-5. **Final integration**
-   - Mount cameras
-   - Wire everything neatly
-   - Add enclosure (optional)
-   - Calibrate and test
-
----
-
 ## Where to Buy
 
 **Primary Source:** AliExpress
