@@ -1,6 +1,6 @@
 # Bill of Materials (BOM)
 
-Complete parts list for building Manège automated photobox.
+Complete parts list for building Manège automated Manège.
 
 **Source:** All parts available on AliExpress
 

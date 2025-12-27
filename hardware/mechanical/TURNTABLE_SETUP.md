@@ -1,4 +1,4 @@
-# Photobox Turntable Setup Guide
+# Manège Turntable Setup Guide
 
 ## Hardware Components
 - ESP32 development board
@@ -92,7 +92,7 @@ Connecting to WiFi...
 WiFi connected!
 IP: 192.168.1.42
 HTTP server started
-Photobox Turntable Ready!
+Manège Turntable Ready!
 ```
 
 ### 5. Test ESP32 API
@@ -124,7 +124,7 @@ TURNTABLE_ENABLED = True
 ### 8. Add UI to Web Interface
 The turntable UI snippet is in `/home/yourusername/Documents/turntable_ui_snippet.html`
 
-To add it to your photobox interface:
+To add it to your Manège interface:
 1. Open `/home/yourusername/Documents/templates/index.html`
 2. Find a suitable location (e.g., after the camera settings section)
 3. Copy the HTML section from `turntable_ui_snippet.html`

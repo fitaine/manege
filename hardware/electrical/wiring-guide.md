@@ -110,7 +110,7 @@
   □ 11. Open Serial Monitor, verify WiFi connection
   □ 12. Test via browser: http://<ESP32_IP_ADDRESS>
   □ 13. Test rotation: /preset/45
-  □ 14. Test Flask integration from photobox UI
+  □ 14. Test Flask integration from Manège UI
 
 ┌─────────────────────────────────────────────────────────────────────┐
 │  TROUBLESHOOTING - NO MOVEMENT                                      │

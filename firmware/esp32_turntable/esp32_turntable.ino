@@ -1,4 +1,4 @@
-// Photobox Turntable Control - ESP32 + DRV8825 + AccelStepper
+// Manège Turntable Control - ESP32 + DRV8825 + AccelStepper
 // Enhanced version with 360° photo sequence and video support
 // Based on working test code with improvements
 
@@ -110,14 +110,14 @@ void setup() {
 
   server.begin();
   Serial.println("HTTP server started");
-  Serial.println("Photobox Turntable Ready!");
+  Serial.println("Manège Turntable Ready!");
 }
 
 void setupRoutes() {
   // Root endpoint - API documentation
   server.on("/", HTTP_GET, []() {
-    String html = "<html><head><title>Photobox Turntable</title></head><body>";
-    html += "<h1>Photobox Turntable Control</h1>";
+    String html = "<html><head><title>Manège Turntable</title></head><body>";
+    html += "<h1>Manège Turntable Control</h1>";
     html += "<h2>Available Endpoints:</h2>";
     html += "<ul>";
     html += "<li><b>GET /status</b> - Get current position and state</li>";

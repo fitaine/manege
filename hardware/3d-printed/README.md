@@ -1,6 +1,6 @@
 # 3D Printed Parts for Manège
 
-Custom 3D printed components for the Manège photobox system.
+Custom 3D printed components for the Manège Manège system.
 
 ---
 
@@ -93,7 +93,7 @@ The brackets hold the wood frame at corners, creating a stable cube structure.
 
 ### Design by NiphtiAe
 
-This design is part of the Manège open-source photobox project.
+This design is part of the Manège open-source Manège project.
 
 **License:** Creative Commons or specified on Printables  
 **Author:** NiphtiAe (Tiphaine Buccino)  

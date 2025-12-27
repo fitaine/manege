@@ -1,4 +1,4 @@
-# Photobox Turntable Project - Complete System Documentation
+# Manège Turntable Project - Complete System Documentation
 
 **Last Updated: November 28, 2025**
 **Status: ✅ FULLY OPERATIONAL - Advanced Features Implemented**
@@ -22,7 +22,7 @@
 
 ## Overview
 
-Your photobox is a complete automated photography system for capturing basketry and craft objects with:
+Your manege is a complete automated photography system for capturing basketry and craft objects with:
 - **Raspberry Pi Camera Module V3** (NoIR - No Infrared filter)
 - **ESP32-controlled motorized turntable** with DRV8825 stepper driver
 - **Web-based interface** for full remote control
@@ -469,7 +469,7 @@ Current Folder Tracker:
 ### Documentation
 ```
 Main README:
-  /home/yourusername/Documents/PHOTOBOX_TURNTABLE_README.md (this file)
+  /home/yourusername/Documents/MANEGE_TURNTABLE_README.md (this file)
 
 Setup Guide:
   /home/yourusername/Documents/TURNTABLE_SETUP.md
@@ -485,7 +485,7 @@ Session Notes:
 ```
 Flask Startup:
   /home/yourusername/Documents/scripts/start_webapp.sh
-  /home/yourusername/Documents/scripts/run_photobox.sh
+  /home/yourusername/Documents/scripts/run_manege.sh
 ```
 
 ---
@@ -562,7 +562,7 @@ pgrep -f "flask run"
 tail -f /tmp/flask.log
 
 # Restart Flask (if using systemd)
-sudo systemctl restart photobox
+sudo systemctl restart manege
 ```
 
 ### ESP32
@@ -590,7 +590,7 @@ df -h /home/yourusername/Pictures/
 
 ## Credits & Licenses
 
-**Project**: Custom photobox for basketry documentation
+**Project**: Custom manege for basketry documentation
 **Hardware**: Raspberry Pi, ESP32, DRV8825, NEMA stepper, Camera Module V3
 **Software Stack**: Flask, rpicam-apps, AccelStepper, ArduinoJson
 

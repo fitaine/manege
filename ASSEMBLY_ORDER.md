@@ -1,6 +1,6 @@
 # Assembly Order
 
-Step-by-step build sequence for Manège automated photobox.
+Step-by-step build sequence for Manège automated Manège.
 
 **Estimated time:** 4-6 hours (spread over multiple sessions recommended)
 
@@ -177,6 +177,6 @@ After successful assembly:
 
 ---
 
-**Enjoy your Manège photobox!**
+**Enjoy your Manège Manège!**
 
 For issues or questions, open an issue on GitHub: https://github.com/fitaine/manege
