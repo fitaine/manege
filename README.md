@@ -1,212 +1,223 @@
 # Manège 🎠
-## Professional 360° Photography for Makers & Artisans
-
-> **Transform your workshop into a professional product photography studio with a single cable.**
+## A Simple 360° Photo Turntable for Documenting Your Work
 
 ![Manège Turntable - 3D Render](docs/images/manege-turntable-render.png)
 
-Manège is the complete open-source photography system that serious makers and artisans have been waiting for. Capture stunning 360° views of your work, stream live to clients, and automatically publish to your online gallery - all controlled from your phone or computer.
+I built this for my wife, who makes willow baskets. She needed a way to document everything she creates - to showcase her work to potential clients, remember past pieces, and build up a portfolio over time. Turns out photographing dozens of baskets gets tedious fast, so I made this automated turntable that uploads photos directly to her website.
+
+It ain't much, but it's honest work. Maybe it'll be useful for your workshop too.
 
 ---
 
-## ✨ Why Manège?
+## What It Does
 
-**You're a craftsperson, not a photographer.** Your time should be spent creating, not fighting with complicated photography setups. Manège gives you professional-quality product photos with zero hassle.
+- Rotates objects on a turntable and takes photos automatically
+- Uploads pictures to WordPress as you shoot (so your website stays updated)
+- Has a simple web interface you can use from your phone
+- Powers everything through a single Ethernet cable (PoE)
+- Includes LED lighting control if you need consistent lighting
 
-### The Complete Package
-
-- 🎥 **Dual Camera System** - Raspberry Pi 5 with dual camera support for simultaneous HQ capture + continuous live streaming
-- 🔌 **True One-Cable Solution** - PoE HAT powers everything: Pi, cameras, LED lighting, and turntable from a single Ethernet cable
-- 💡 **Integrated LED Control** - Built-in power management for your LED light strips - one power source for the entire system
-- 🌀 **Professional Turntable** - 8-inch lazy susan supports large objects with precision rotation
-- 🌐 **WordPress Auto-Upload** - Your photos automatically appear in your online gallery as you shoot
-- 📱 **Lightweight Web App** - Control everything from any device - fast, responsive, and functional
+It's basically a lazy susan with a stepper motor, a Raspberry Pi with cameras, and some code to tie it together.
 
 ---
 
-## 🎯 What Can You Do?
+## Why I Built It This Way
 
-### For Product Catalogues
-Photograph your entire inventory systematically. The WordPress integration creates a beautiful grid wall gallery where customers can browse your complete catalogue instantly.
+### The Story
+When you make things by hand - baskets, pottery, woodwork, whatever - you end up with a lot of items that need photographing. Setting up each shot, rotating the object, taking multiple angles... it's repetitive and takes time away from actual making.
 
-### For Client Presentations
-Live stream your work-in-progress directly to clients. Get real-time feedback before shipping.
+My wife needed:
+- A record of everything she's made (memory fades, photos don't)
+- Images to show potential clients ("I can make something like this one")
+- A way to keep her website gallery updated without the hassle
 
-### For Online Sales
-Generate professional 360° product views and interactive spins that boost conversion rates.
+### The Solution
+Instead of a fancy commercial product photography rig, I went with parts you can actually get:
+- **Raspberry Pi 5** - Does the heavy lifting (cameras, web server, uploads)
+- **ESP32** - Controls the turntable motor
+- **PoE HAT** - Powers everything through the Ethernet cable (one less wire to worry about)
+- **Lazy susan bearing** - The turntable base (8 inches, supports decent-sized objects)
+- **Stepper motor** - Smooth, precise rotation
 
-### For Documentation
-Build a visual archive of everything you create with automatic organization and tagging.
-
----
-
-## 🚀 Key Features
-
-### Camera & Capture
-- **Dual Camera Architecture** - Stream live while capturing high-resolution stills
-- **Manual Controls** - Precise focus, exposure, and white balance adjustment
-- **HDR Mode** - Perfect for challenging lighting conditions
-- **360° Sequences** - Automated multi-angle capture with configurable step count
-- **Video Recording** - Create smooth rotating product videos
-
-### Hardware Excellence
-- **8-inch Turntable** - Handles everything from jewelry to furniture
-- **Ultra-Precise Motion** - 0.005625° per step for silky-smooth rotation
-- **PoE Powered** - Just plug in one Ethernet cable = power + data
-- **Integrated LED Power** - Dedicated power rail for your lighting setup
-
-### Software & Workflow
-- **WordPress Integration** - Auto-upload to your website gallery as you shoot
-- **Grid Wall View** - Customers see your entire catalogue at a glance
-- **Web-Based Control** - Access from any device on your network
-- **Fast & Responsive** - Lightweight interface that works on phones, tablets, and computers
-- **Open Source** - Customize everything to match your workflow
-
-![Manège Web App Interface](app/static/images/manege-web-app.jpg)
-*The Manège web interface - intuitive controls for live preview, manual camera settings, and automated 360° capture*
+It's all open source hardware and software. Build it yourself, modify it, whatever works for you.
 
 ---
 
-## 📦 What You Need
+## What You Get
 
-### Essential Hardware
-- Raspberry Pi 5 (16GB recommended)
-- 1 Raspberry Camera Module 3
-- 1 Raspberry HQ camera
+### Camera System
+- Two Raspberry Pi cameras (one for preview, one for high-res shots)
+- Manual controls for focus, exposure, white balance
+- Live preview so you can see what you're shooting
+- 360° sequences with however many photos you want
+
+### Turntable
+- 8-inch diameter (handles most hand-made objects)
+- Precise rotation steps (can go as fine as 0.005625° per step)
+- Controlled over WiFi from the web interface
+
+### Web Interface
+- Works on phones, tablets, computers - anything with a browser
+- Simple controls: rotate, capture, adjust settings
+- Live camera preview
+- No app to install
+
+### WordPress Integration
+- Photos upload automatically to your WordPress site
+- Builds a gallery as you shoot
+- Tag and organize as you go
+
+### LED Control
+- If you add LED strips for lighting, the system can control them
+- Brightness adjustment via PWM
+- All powered from the same PoE supply
+
+---
+
+## What You Need to Build One
+
+### Core Parts
+- Raspberry Pi 5 (8GB or 16GB)
+- Raspberry Pi Camera Module 3
+- Raspberry Pi HQ Camera
 - PoE+ HAT for Raspberry Pi 5
-- ESP32 development board
-- NEMA 17 stepper motor + A4988 driver
+- ESP32 dev board
+- NEMA 17 stepper motor
+- DRV8825 stepper driver
 - 8-inch lazy susan bearing
-- Power supply for LED strip (if using integrated lighting)
-- Ethernet switch with PoE+ support
+- Power components (buck converters, etc.)
 
-### Optional But Recommended
-- LED light strips for consistent product lighting
-- Enclosure with honeygrid ventilation (STL files included)
+### Optional Additions
+- LED light strips (12V COB strips work well)
+- Enclosure (3D printable files included)
+- MOSFET for LED control
 
+**Full parts list with links: [BOM.md](BOM.md)**
 
-**Full BOM with suppliers: [BOM.md](BOM.md)**
+The total cost is reasonable for what you get - cheaper than commercial photo turntables with fewer features.
 
 ---
 
-## 🎬 Quick Start
+## Getting Started
 
-### 1. Get Your Hardware Ready
-Follow the [Assembly Guide](ASSEMBLY_ORDER.md) to build your Manège. The PoE HAT simplifies everything - just connect Ethernet and you're powered up.
+### Build the Hardware
+Follow [ASSEMBLY_ORDER.md](ASSEMBLY_ORDER.md) for step-by-step instructions. The electrical wiring guide is in `hardware/electrical/wiring-guide.md`.
 
-### 2. Configure Software
+### Set Up the Software
 ```bash
 cd manege
 cp config.example.py config.py
-nano config.py  # Set your WordPress credentials and preferences
+nano config.py  # Add your WiFi and WordPress details
 pip3 install -r requirements.txt
 ```
 
-### 3. Flash ESP32 Firmware
-Upload the turntable controller firmware from `firmware/esp32_turntable/`
+### Flash the ESP32
+The turntable controller firmware is in `firmware/esp32_turntable/`. Upload it with Arduino IDE or PlatformIO.
 
-### 4. Launch the Web App
+### Start It Up
 ```bash
 ./scripts/start_webapp.sh
 ```
 
-Access from any device: `http://<your-pi-ip>:5000`
-
-### 5. Start Shooting!
-Take a test shot, verify the WordPress upload, and start building your catalogue.
-
-**Detailed setup: [Full Documentation](hardware/README.md)**
+Then open `http://<raspberry-pi-ip>:5000` in your browser.
 
 ---
 
-## 🌐 WordPress Integration
+## How It Works
 
-Manège automatically uploads your photos as you shoot them, building a beautiful online gallery:
+1. **Power On**: Plug in one PoE Ethernet cable. That's it - the Pi, cameras, LEDs, and turntable all power up.
+2. **Take Photos**: Use the web interface to position your object, adjust camera settings, and capture.
+3. **Auto-Upload**: Photos go straight to your WordPress media library and gallery.
+4. **Keep Going**: Document your next piece. The system's ready whenever you are.
 
-- **Automatic Upload** - Every capture instantly appears in your WordPress media library
-- **Gallery Grid View** - Your catalogue displays as an organized image wall
-- **No Manual Transfers** - Set it up once, never touch it again
-- **Custom Organization** - Tag and categorize as you shoot
-
-Perfect for artisans who want to keep their online catalogue updated without the hassle.
-
-![WordPress Gallery Grid View](app/static/images/wordpress-gallery-grid.png)
-*Example of a WordPress gallery showcasing a craftsman's complete basket catalogue - clean grid layout for easy browsing*
+It's designed to be something you can use daily without thinking about it.
 
 ---
 
-## 💪 Built for Real Work
+## Real Use Case: Willow Baskets
 
-This isn't a hobbyist toy - Manège is designed for daily professional use:
+My wife makes traditional willow baskets. Each one is unique - different sizes, shapes, weaving patterns. Over a year, that's 50-100+ baskets.
 
-- **Reliable PoE Power** - No battery anxiety, no power adapter tangles
-- **Thermal Management** - Honeygrid vents prevent overheating during marathon photo sessions
-- **Large Capacity** - 8-inch turntable handles serious work, not just trinkets
-- **Fast Operation** - Lightweight web interface responds instantly
-- **Production Ready** - Shoot dozens or hundreds of products without slowing down
+Before Manège:
+- Set up phone or camera on a tripod
+- Manually rotate basket
+- Take 8-12 photos per basket
+- Transfer photos to computer
+- Resize, rename, upload to website
+- Repeat for next basket
 
----
+With Manège:
+- Place basket on turntable
+- Press "Capture 360°"
+- Watch it rotate and shoot automatically
+- Photos appear in website gallery
+- Done
 
-## 🏗️ Build or Buy?
-
-**Want to Build It Yourself?**
-Everything you need is here:
-- Complete bill of materials with part numbers
-- Step-by-step assembly guide
-- 3D printable files for custom enclosure
-- Full source code and schematics
-
-**Want a Ready-Made Solution?**
-*Coming Soon* - Pre-assembled kits and fully assembled units for makers who want to skip straight to shooting.
+The time savings add up fast. More importantly, she actually uses it - which means her website stays updated and potential clients can see what she's capable of making.
 
 ---
 
-## 📚 Documentation
+## Can You Use This?
 
-- [Bill of Materials](BOM.md) - Complete parts list with links
-- [Assembly Guide](ASSEMBLY_ORDER.md) - Step-by-step build instructions
-- [Camera Setup](app/CAMERA_SETUP.md) - Raspberry Pi camera configuration
-- [Git Quick Guide](GIT_QUICK_GUIDE.md) - Contribute to the project
-- [Credits](CREDITS.md) - Standing on the shoulders of giants
+If you make physical things and need photos of them, probably yes:
+- Pottery, ceramics
+- Woodworking, furniture
+- Metalwork, jewelry
+- Leather goods
+- Textiles, baskets
+- Scale models, miniatures
+- Product prototypes
+
+If you're just getting started and don't have many items yet, you might not need the automation. But if you're making dozens or hundreds of pieces a year, this saves real time.
 
 ---
 
-## 🤝 Community & Support
+## Documentation
 
-Built by makers, for makers in the Jura mountains of France.
+- [Bill of Materials](BOM.md) - Parts list with supplier links
+- [Assembly Guide](ASSEMBLY_ORDER.md) - How to build it
+- [Wiring Guide](hardware/electrical/wiring-guide.md) - Electrical connections
+- [Camera Setup](app/CAMERA_SETUP.md) - Configuring the Raspberry Pi cameras
+- [Git Guide](GIT_QUICK_GUIDE.md) - How to contribute
+
+---
+
+## Contributing
+
+This is an open project. If you build one and make improvements, share them:
+- Better enclosure designs
+- Code improvements
+- Documentation fixes
+- Ideas for features
+
+[GitHub Issues](https://github.com/fitaine/manege/issues) is the place for bug reports and feature requests.
+
+---
+
+## License
+
+- **Software**: MIT License - Use it however you want
+- **Hardware**: CERN-OHL-P-2.0 - Open source hardware
+
+Build it, sell products photographed with it, modify it for your needs. That's what open source is for.
+
+---
+
+## Credits
+
+This project started with [twirly](https://github.com/veebch/twirly) by veebch - an elegant ESP32-based turntable. I added the Raspberry Pi cameras, PoE power system, LED control, WordPress integration, and web interface to make it work for documenting craft work at scale.
+
+Thanks to veebch for the foundation and for open-sourcing their design.
+
+---
+
+## Support
+
+Built in the Jura mountains of France, one piece at a time.
 
 - **Website**: [tiphainebuccino.com](https://tiphainebuccino.com)
-- **Issues & Features**: [GitHub Issues](https://github.com/yourusername/manege/issues)
-- **Contributions Welcome**: See [Contributing Guidelines](CONTRIBUTING.md)
+- **Issues**: [GitHub Issues](https://github.com/fitaine/manege/issues)
 
 ---
 
-## 📜 License
-
-- **Software**: MIT License - Use it, modify it, sell products photographed with it
-- **Hardware**: CERN-OHL-P-2.0 - Open source hardware for everyone
-
----
-
-## 🙏 Credits
-
-Manège began as an evolution of [twirly](https://github.com/veebch/twirly) by veebch. We took their elegant ESP32 turntable concept and built a complete photography system around it.
-
-**Original concept**: ESP32-based turntable by veebch
-**Manège additions**: Raspberry Pi camera integration, dual camera support, PoE power, LED integration, WordPress auto-upload, web interface, and production-ready hardware design.
-
-Huge thanks to veebch for the inspiration! 🎉
-
----
-
-## 🎨 Start Creating
-
-Your craftsmanship deserves professional presentation. Whether you're selling on Etsy, building a portfolio, or documenting your workshop's output - Manège gives you studio-quality results without the studio.
-
-**One cable. Professional results. Open source freedom.**
-
-Ready to showcase your work the way it deserves? Start building your Manège today.
-
----
-
-*Made with ❤️ in Jura, France*
+*Made for makers who'd rather spend time making things than photographing them.*
