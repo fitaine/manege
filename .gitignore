@@ -21,6 +21,7 @@ app/static/photos/*
 !app/static/*.png
 !app/static/images/*.png
 !app/static/images/*.jpg
+!docs/visuals/*.jpg
 
 # Logs
 *.log

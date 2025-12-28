@@ -1,7 +1,9 @@
 # Manège 🎠
 ## A Simple 360° Photo Turntable for Documenting Your Work
 
-![Manège Turntable - 3D Render](docs/images/manege-rotation.gif)
+<p align="center">
+  <img src="docs/media/3d-renders/manege-rotation.gif" alt="Manège Turntable Animation" width="600">
+</p>
 
 I built this for my wife, who makes willow baskets. She needed a way to document everything she creates - to showcase her work to potential clients, remember past pieces, and build up a portfolio over time. Turns out photographing dozens of baskets gets tedious fast, so I made this automated turntable that uploads photos directly to her website.
 
@@ -61,11 +63,13 @@ It's all open source hardware and software. Build it yourself, modify it, whatev
 - Simple controls: rotate, capture, adjust settings
 - Live camera preview
 - No app to install
+<p align="center">  <img src="docs/visuals/app.jpg" alt="Manège Web Interface" width="700">  <br>  <em>The Manège web interface - live preview, camera controls, and automated 360° capture</em></p>
 
 ### WordPress Integration
 - Photos upload automatically to your WordPress site
 - Builds a gallery as you shoot
 - Tag and organize as you go
+<p align="center">  <img src="docs/visuals/gallery.png" alt="WordPress Gallery Grid" width="700">  <br>  <em>Example WordPress gallery showing organized product catalogue - clean grid layout for easy browsing</em></p>
 
 ### LED Control
 - If you add LED strips for lighting, the system can control them
