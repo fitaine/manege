@@ -1,12 +1,13 @@
 // Manège Turntable Control - ESP32 + DRV8825 + AccelStepper
-// Enhanced version with 360° photo sequence and video support
+// Enhanced version with 360° photo sequence, video support, and LED control
 // Based on working test code with improvements
 
 #include <WiFi.h>
 #include <WebServer.h>
 #include <AccelStepper.h>
 #include <ArduinoJson.h>
-n// Configuration (WiFi credentials, network settings)
+
+// Configuration (WiFi credentials, network settings)
 #include "config.h"
 
 // === Wi-Fi Configuration ===
@@ -23,6 +24,12 @@ const char* password = WIFI_PASSWORD;
 #define M1_PIN 22
 #define M2_PIN 19
 #define EN_PIN 15
+
+// === LED Control Pin ===
+#define LED_PIN 25            // GPIO 25 for LED PWM control (MOSFET gate)
+#define LED_PWM_CHANNEL 0     // PWM channel (0-15 available)
+#define LED_PWM_FREQ 5000     // 5 kHz PWM frequency
+#define LED_PWM_RESOLUTION 8  // 8-bit resolution (0-255)
 
 // === Motor Configuration ===
 const int STEPS_PER_REV = 200;       // 200 steps for full step mode (motor shaft)
@@ -50,6 +57,36 @@ WebServer server(80);
 volatile bool isMoving = false;
 volatile bool stopRequested = false;
 long homePosition = 0;               // Reference home position
+int currentLedBrightness = 0;        // Current LED brightness (0-255)
+
+// === LED Control Functions ===
+void setupLED() {
+  ledcSetup(LED_PWM_CHANNEL, LED_PWM_FREQ, LED_PWM_RESOLUTION);
+  ledcAttachPin(LED_PIN, LED_PWM_CHANNEL);
+  ledcWrite(LED_PWM_CHANNEL, 0);  // Start with LEDs off
+  Serial.println("LED PWM initialized on GPIO 25");
+}
+
+void setLedBrightness(int brightness) {
+  // Constrain to 0-255
+  brightness = constrain(brightness, 0, 255);
+  currentLedBrightness = brightness;
+  ledcWrite(LED_PWM_CHANNEL, brightness);
+  
+  Serial.print("LED brightness set to: ");
+  Serial.print(brightness);
+  Serial.print(" (");
+  Serial.print((brightness * 100) / 255);
+  Serial.println("%)");
+}
+
+void ledOn(int brightness = 255) {
+  setLedBrightness(brightness);
+}
+
+void ledOff() {
+  setLedBrightness(0);
+}
 
 // === Driver Control Functions ===
 void wakeDriver() {
@@ -83,6 +120,9 @@ void setup() {
 
   wakeDriver();
   delay(10);
+
+  // Setup LED PWM
+  setupLED();
 
   // Setup stepper motion parameters
   stepper.setMaxSpeed(SPEED_MEDIUM);
@@ -119,6 +159,7 @@ void setupRoutes() {
     String html = "<html><head><title>Manège Turntable</title></head><body>";
     html += "<h1>Manège Turntable Control</h1>";
     html += "<h2>Available Endpoints:</h2>";
+    html += "<h3>Turntable Control:</h3>";
     html += "<ul>";
     html += "<li><b>GET /status</b> - Get current position and state</li>";
     html += "<li><b>POST /rotate?steps=N</b> - Rotate by N steps (+ = CW, - = CCW)</li>";
@@ -133,6 +174,15 @@ void setupRoutes() {
     html += "<li><b>POST /stop</b> - Emergency stop</li>";
     html += "<li><b>POST /sleep</b> - Disable motor (save power)</li>";
     html += "<li><b>POST /wake</b> - Enable motor</li>";
+    html += "</ul>";
+    html += "<h3>LED Control:</h3>";
+    html += "<ul>";
+    html += "<li><b>GET /led/status</b> - Get LED status</li>";
+    html += "<li><b>POST /led?brightness=N</b> - Set brightness (0-255 or 0-100%)</li>";
+    html += "<li><b>POST /led/on</b> - Turn LEDs on (full brightness)</li>";
+    html += "<li><b>POST /led/off</b> - Turn LEDs off</li>";
+    html += "<li><b>POST /led/brightness?value=N</b> - Set brightness (0-255)</li>";
+    html += "<li><b>POST /led/percent?value=N</b> - Set brightness (0-100%)</li>";
     html += "</ul></body></html>";
     server.send(200, "text/html", html);
   });
@@ -163,6 +213,14 @@ void setupRoutes() {
   server.on("/sleep", HTTP_POST, handleSleep);
   server.on("/wake", HTTP_POST, handleWake);
 
+  // LED control endpoints
+  server.on("/led/status", HTTP_GET, handleLedStatus);
+  server.on("/led", HTTP_POST, handleLed);
+  server.on("/led/on", HTTP_POST, handleLedOn);
+  server.on("/led/off", HTTP_POST, handleLedOff);
+  server.on("/led/brightness", HTTP_POST, handleLedBrightness);
+  server.on("/led/percent", HTTP_POST, handleLedPercent);
+
   // Legacy presets (keep for compatibility)
   server.on("/preset/45", HTTP_ANY, []() {
     rotateByDegrees(45, SPEED_MEDIUM, ACCEL_MEDIUM);
@@ -185,6 +243,8 @@ void handleStatus() {
   doc["distance_to_go"] = stepper.distanceToGo();
   doc["speed"] = stepper.speed();
   doc["max_speed"] = stepper.maxSpeed();
+  doc["led_brightness"] = currentLedBrightness;
+  doc["led_percent"] = (currentLedBrightness * 100) / 255;
   doc["wifi_rssi"] = WiFi.RSSI();
 
   String json;
@@ -450,6 +510,82 @@ void handleSleep() {
 void handleWake() {
   wakeDriver();
   sendJSON(200, "success", "Motor enabled");
+}
+
+// === LED Control Handlers ===
+
+void handleLedStatus() {
+  StaticJsonDocument<128> doc;
+  doc["brightness"] = currentLedBrightness;
+  doc["percent"] = (currentLedBrightness * 100) / 255;
+  doc["is_on"] = currentLedBrightness > 0;
+
+  String json;
+  serializeJson(doc, json);
+  server.send(200, "application/json", json);
+}
+
+void handleLed() {
+  if (!server.hasArg("brightness")) {
+    sendJSON(400, "error", "Missing 'brightness' parameter");
+    return;
+  }
+
+  int brightness = server.arg("brightness").toInt();
+  
+  // Auto-detect if value is percentage (0-100) or raw (0-255)
+  if (brightness <= 100) {
+    // Assume percentage
+    brightness = map(brightness, 0, 100, 0, 255);
+  }
+  
+  setLedBrightness(brightness);
+  sendJSON(200, "success", "LED brightness set to " + String(currentLedBrightness));
+}
+
+void handleLedOn() {
+  int brightness = 255;
+  if (server.hasArg("brightness")) {
+    brightness = server.arg("brightness").toInt();
+    if (brightness <= 100) {
+      brightness = map(brightness, 0, 100, 0, 255);
+    }
+  }
+  
+  ledOn(brightness);
+  sendJSON(200, "success", "LEDs turned on");
+}
+
+void handleLedOff() {
+  ledOff();
+  sendJSON(200, "success", "LEDs turned off");
+}
+
+void handleLedBrightness() {
+  if (!server.hasArg("value")) {
+    sendJSON(400, "error", "Missing 'value' parameter");
+    return;
+  }
+
+  int brightness = server.arg("value").toInt();
+  brightness = constrain(brightness, 0, 255);
+  
+  setLedBrightness(brightness);
+  sendJSON(200, "success", "LED brightness set to " + String(brightness));
+}
+
+void handleLedPercent() {
+  if (!server.hasArg("value")) {
+    sendJSON(400, "error", "Missing 'value' parameter");
+    return;
+  }
+
+  int percent = server.arg("value").toInt();
+  percent = constrain(percent, 0, 100);
+  int brightness = map(percent, 0, 100, 0, 255);
+  
+  setLedBrightness(brightness);
+  sendJSON(200, "success", "LED brightness set to " + String(percent) + "%");
 }
 
 // === Helper Functions ===
