@@ -3,6 +3,8 @@
 
 > **Transform your workshop into a professional product photography studio with a single cable.**
 
+![Manège Turntable - 3D Render](docs/images/manege-turntable-render.png)
+
 Manège is the complete open-source photography system that serious makers and artisans have been waiting for. Capture stunning 360° views of your work, stream live to clients, and automatically publish to your online gallery - all controlled from your phone or computer.
 
 ---
