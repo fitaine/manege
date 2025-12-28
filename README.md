@@ -1,7 +1,7 @@
 # Manège 🎠
 ## A Simple 360° Photo Turntable for Documenting Your Work
 
-![Manège Turntable - 3D Render](docs/images/manege-turntable-render.png)
+![Manège Turntable - 3D Render](docs/images/manege-rotation.gif)
 
 I built this for my wife, who makes willow baskets. She needed a way to document everything she creates - to showcase her work to potential clients, remember past pieces, and build up a portfolio over time. Turns out photographing dozens of baskets gets tedious fast, so I made this automated turntable that uploads photos directly to her website.
 
