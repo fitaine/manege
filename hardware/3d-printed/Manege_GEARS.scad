@@ -5,6 +5,9 @@
   include <gears.scad>;
 
   // === CONFIGURATION ===
+  // PART SELECTOR: "ring", "pinion", or "both"
+  part = "both";           // Change to "ring" or "pinion" to export individually
+
   module_size = 1.25;      // Module (tooth size)
   pinion_teeth = 22;       // Motor gear
   ring_teeth = 110;        // Lazy susan gear
@@ -23,6 +26,7 @@
   ring_od = module_size * ring_teeth + (2 * rim_thickness);  // ~143.5mm
 
   echo("=== GEAR SPECIFICATIONS ===");
+  echo(str("Rendering part: ", part));
   echo(str("Gear Ratio: ", gear_ratio, ":1"));
   echo(str("Pinion OD: ", pinion_od, "mm"));
   echo(str("Ring OD: ", ring_od, "mm"));
@@ -30,23 +34,27 @@
   echo(str("Steps per revolution (1/32 microstepping): ", 200 * 32 * gear_ratio));
 
   // === RING GEAR (Lazy Susan - Centered) ===
-  herringbone_ring_gear(
-      modul=module_size,
-      tooth_number=ring_teeth,
-      width=gear_width,
-      rim_width=rim_thickness,
-      pressure_angle=20,
-      helix_angle=30
-  );
+  if (part == "ring" || part == "both") {
+      herringbone_ring_gear(
+          modul=module_size,
+          tooth_number=ring_teeth,
+          width=gear_width,
+          rim_width=rim_thickness,
+          pressure_angle=20,
+          helix_angle=30
+      );
+  }
 
   // === PINION GEAR (Motor - Left Side, INSIDE ring) ===
-  translate([-center_distance, 0, 0])
-  herringbone_gear(
-      modul=module_size,
-      tooth_number=pinion_teeth,
-      width=gear_width,
-      bore=pinion_bore,
-      pressure_angle=20,
-      helix_angle=30,
-      optimized=true
-  );
+  if (part == "pinion" || part == "both") {
+      translate([-center_distance, 0, 0])
+      herringbone_gear(
+          modul=module_size,
+          tooth_number=pinion_teeth,
+          width=gear_width,
+          bore=pinion_bore,
+          pressure_angle=20,
+          helix_angle=30,
+          optimized=true
+      );
+  }
