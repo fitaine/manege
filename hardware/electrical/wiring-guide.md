@@ -124,9 +124,22 @@
   Simple Rule: Connect capacitor (+) to device (+), and (-) to device (-)
                Place as CLOSE as possible to each device!
 
-  TOTAL: 4 Capacitors (not 5!)
+  TOTAL: 2 Required Capacitors + 1 Optional
 
-  Capacitor 1: Motor Power (20V VMOT) - 100µF @ 50V
+  Capacitor 1: PD Trigger Output (20V Main Bus) - 100µF @ 50V
+  ┌──────────────────────────────────────────┐
+  │  PD ──┬─→ 20V Main Bus (+)               │
+  │       │                                   │
+  │     [100µF]  ← Place at PD trigger       │
+  │     +    -     output terminals          │
+  │       │                                   │
+  │  GND ──┴─→ Ground bus bar                │
+  │                                           │
+  │  Purpose: Stabilizes 20V supply and      │
+  │  handles load transients                 │
+  └──────────────────────────────────────────┘
+
+  Capacitor 2: Motor Power (20V VMOT) - 100µF @ 50V
   ┌──────────────────────────────────────────┐
   │  20V ──┬─→ DRV8825 VMOT pin              │
   │        │                                  │
@@ -139,41 +152,46 @@
   │  pin directly, NOT to ground bus!        │
   └──────────────────────────────────────────┘
 
-  Capacitor 2: Logic Power (5V) - 100µF @ 25V
+  LM2596 Buck Converter (5V) - ALREADY HAS CAPACITORS!
   ┌──────────────────────────────────────────┐
-  │  5V  ──┬─→ Buck OUT(+)                   │
-  │        │                                  │
-  │     [100µF]  ← Place at Buck             │
-  │     +    -     converter output          │
-  │        │                                  │
-  │  GND ──┴─→ Buck OUT(-)                   │
+  │  NOTE: LM2596 board has built-in caps:  │
+  │  • Input:  100µF @ 50V                  │
+  │  • Output: 100µF @ 50V                  │
+  │                                          │
+  │  NO additional capacitors needed on     │
+  │  the LM2596 board itself.               │
   └──────────────────────────────────────────┘
 
-  Capacitor 3: XH-M291 Input (20V) - 100µF @ 50V [OPTIONAL]
+  XH-M291 Buck Converter (12V) - ALREADY HAS CAPACITORS!
   ┌──────────────────────────────────────────┐
-  │  20V ──┬─→ XH-M291 IN(+)                 │
-  │        │                                  │
-  │     [100µF]  50V rated                   │
-  │     +    -   (OPTIONAL but recommended)  │
-  │        │                                  │
-  │  GND ──┴─→ XH-M291 IN(-)                 │
+  │  NOTE: XH-M291 board has built-in caps: │
+  │  • C4 (input):  220µF @ 50V             │
+  │  • C8 (output): 220µF @ 50V             │
+  │                                          │
+  │  NO additional capacitors needed on     │
+  │  the XH-M291 board itself.              │
   └──────────────────────────────────────────┘
 
-  Capacitor 4: XH-M291 Output (12V) - 220µF @ 25V [CRITICAL!]
+  Capacitor 3: At LED Strips - 220µF @ 25V [OPTIONAL]
   ┌──────────────────────────────────────────┐
-  │  12V ──┬─→ XH-M291 OUT(+)                │
-  │        │   (before LED strip)            │
+  │  12V ──┬─→ LED Strip (+)                 │
+  │        │                                  │
   │     [220µF]  25V rated                   │
-  │     +    -   PREVENTS LED FLICKER!       │
+  │     +    -   Place at LED connection     │
   │        │                                  │
-  │  GND ──┴─→ XH-M291 OUT(-)                │
+  │  GND ──┴─→ LED Strip (-)                 │
+  │                                           │
+  │  ONLY add if:                            │
+  │  • Experiencing PWM dimming flicker      │
+  │  • Wires from XH-M291 to LEDs > 10cm    │
   └──────────────────────────────────────────┘
 
   BILL OF MATERIALS - Capacitors:
   ─────────────────────────────────────────────────────────
-  □ 2× 100µF electrolytic @ 50V (for 20V circuits)
-  □ 1× 100µF electrolytic @ 25V (for 5V circuit)
-  □ 1× 220µF electrolytic @ 25V (for 12V LED output)
+  □ 2× 100µF electrolytic @ 50V (PD Trigger output + DRV8825 VMOT)
+  □ 1× 220µF electrolytic @ 25V [OPTIONAL - only if LED flicker]
+
+  NOTE: LM2596 and XH-M291 buck converters have built-in capacitors!
 
   Voltage Rating Guide:
   - 20V circuits → use 50V rated (1.5× safety margin minimum)
@@ -261,9 +279,9 @@
   Turntable System:
   ─────────────────────────────────────────────────────────────
   □ 1. Power off everything
-  □ 2. Install 1N5819 diode between Buck 5V and ESP32 VIN
-  □ 3. Install 100µF@50V cap on 20V VMOT (at DRV8825 pins)
-  □ 4. Install 100µF@25V cap on 5V Buck output
+  □ 2. Install 100µF@50V cap at PD Trigger output (20V main bus)
+  □ 3. Install 1N5819 diode between Buck 5V and ESP32 VIN
+  □ 4. Install 100µF@50V cap on 20V VMOT (at DRV8825 pins)
   □ 5. Set up ground bus bar (screw terminal block)
   □ 6. Connect all grounds to ground bus bar
   □ 7. Connect ESP32 to DRV8825 (8 control signals)
@@ -279,19 +297,17 @@
 
   LED System:
   ─────────────────────────────────────────────────────────────
-  □ 1. Install 100µF@50V cap on XH-M291 input (20V) [OPTIONAL]
-  □ 2. Install 220µF@25V cap on XH-M291 output (12V) [CRITICAL]
-  □ 3. Connect XH-M291 input to 20V main bus
-  □ 4. Adjust XH-M291 output to exactly 12.0V (use multimeter)
-  □ 5. Connect GPIO 25 to MOSFET Gate
-  □ 6. Connect 12V from XH-M291 to LED Strip (+)
-  □ 7. Connect LED Strip (-) to MOSFET Drain
-  □ 8. Connect MOSFET Source to ground bus bar
-  □ 9. Test with 1 LED strip first
-  □ 10. Test PWM control: /led?brightness=50
-  □ 11. Add remaining LED strips gradually
-  □ 12. Verify total current < 3A
-  □ 13. Check for LED flicker (if present, check cap #4)
+  □ 1. Connect XH-M291 input to 20V main bus
+  □ 2. Adjust XH-M291 output to exactly 12.0V (use multimeter)
+  □ 3. Connect GPIO 25 to MOSFET Gate
+  □ 4. Connect 12V from XH-M291 to LED Strip (+)
+  □ 5. Connect LED Strip (-) to MOSFET Drain
+  □ 6. Connect MOSFET Source to ground bus bar
+  □ 7. Test with 1 LED strip first
+  □ 8. Test PWM control: /led?brightness=50
+  □ 9. Add remaining LED strips gradually
+  □ 10. Verify total current < 3A
+  □ 11. If LED flicker occurs, add 220µF@25V cap at LED strips
 
 ┌─────────────────────────────────────────────────────────────────────┐
 │  TROUBLESHOOTING - NO MOVEMENT                                      │
@@ -326,8 +342,7 @@
 
   Check:
   ✓ XH-M291 output is 12.0V (measure with multimeter)
-  ✓ 220µF capacitor installed on 12V output (CRITICAL!)
-  ✓ Capacitor polarity correct (+ to 12V, - to GND)
+  ✓ XH-M291 onboard capacitors present (C4 and C8, 220µF each)
   ✓ MOSFET is logic-level (IRLZ44N works with 3.3V)
   ✓ GPIO 25 PWM signal present (use /led?brightness=255)
   ✓ LED wiring: 12V → LED(+), LED(-) → MOSFET Drain
@@ -337,11 +352,11 @@
   ✓ Check LED strip connections (loose wires)
 
   LED Flicker Causes:
-  ✓ Missing 220µF output capacitor (most common!)
-  ✓ Capacitor too far from XH-M291 (place within 2cm)
-  ✓ Insufficient capacitance (use 220µF minimum)
+  ✓ Long wires from XH-M291 to LED strips (>10cm)
+  ✓ Add 220µF @ 25V cap at LED strip connection if flickering
   ✓ Wrong MOSFET wiring (LED strip must come BEFORE MOSFET)
   ✓ PWM frequency too low (firmware uses 5kHz, should be OK)
+  ✓ Loose connections or bad solder joints
 
 ┌─────────────────────────────────────────────────────────────────────┐
 │  CURRENT LIMIT ADJUSTMENT (DRV8825)                                 │
