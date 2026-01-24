@@ -230,6 +230,99 @@ main {
   color: #cc3333;
 }
 
+/* Camera Switch Container */
+.camera-switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Camera toggle switch - matches existing toggle style */
+.camera-switch {
+  position: relative;
+  width: 140px;
+  height: 40px;
+  display: inline-block;
+}
+
+.camera-switch input {
+  display: none;
+}
+
+.camera-switch .toggle-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, var(--switch-bg-start), var(--switch-bg-end));
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  box-shadow: inset 2px 2px 4px var(--shadow-light), inset -2px -2px 4px var(--shadow-dark);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--switch-label-inactive);
+  user-select: none;
+  overflow: hidden;
+}
+
+.camera-switch .toggle-text {
+  position: relative;
+  z-index: 2;
+  width: 50%;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+.camera-switch .toggle-text.left {
+  color: var(--switch-label-auto-active);
+}
+
+.camera-switch .toggle-slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 8px);
+  height: 32px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, var(--slider-bg-start), var(--slider-bg-end));
+  box-shadow: 2px 2px 4px var(--slider-shadow-dark), -2px -2px 4px var(--slider-shadow-light);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.camera-switch input:checked + .toggle-label .toggle-slider {
+  left: calc(50% + 4px);
+}
+
+.camera-switch input:checked + .toggle-label .toggle-text.left {
+  color: var(--switch-label-inactive);
+}
+
+.camera-switch input:checked + .toggle-label .toggle-text.right {
+  color: var(--switch-label-auto-active);
+}
+
+.auto-switch-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.auto-switch-label input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: var(--highlight);
+}
+
 .stream-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -859,6 +952,47 @@ main {
   stroke: var(--wb-border);
 }
 
+
+/* Light Section Styles */
+#light-section {
+  width: 100%;
+  position: relative;
+}
+
+.light-toggle-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.light-presets {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.light-preset-btn {
+  padding: 0.5rem 1rem;
+  background-color: var(--panel-dark);
+  color: var(--text-light);
+  border: 2px solid var(--wb-border);
+  border-radius: 6px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.light-preset-btn:hover {
+  background-color: var(--wb-hover);
+  transform: translateY(-2px);
+}
+
+.light-preset-btn.active {
+  background-color: var(--wb-accent);
+  border-color: var(--wb-hover);
+}
+
 </style>
 </head>
 <body>
@@ -969,6 +1103,22 @@ main {
           <span class="settings-label">Tint:</span>
           <span class="settings-value" id="settings-tint">--</span>
         </div>
+      </div>
+
+      <!-- Camera Switch Toggle -->
+      <div class="camera-switch-container">
+        <div class="toggle-switch camera-switch">
+          <input type="checkbox" id="camera-toggle" onchange="switchCamera()">
+          <label for="camera-toggle" class="toggle-label">
+            <span class="toggle-text left">HQ</span>
+            <span class="toggle-text right">V3</span>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <label class="auto-switch-label">
+          <input type="checkbox" id="auto-switch-toggle" checked onchange="toggleAutoSwitch()">
+          Auto
+        </label>
       </div>
     </div>
 
@@ -1111,6 +1261,13 @@ main {
         </svg>
         <span>CONTRAST</span>
       </button>
+      <button id="light-tab-btn" class="footer-tab-btn" data-section="light" title="LED Light">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18h6M10 22h4M12 2v1M12 9a4 4 0 0 1 4 4v3H8v-3a4 4 0 0 1 4-4z"/>
+          <path d="M4.22 10.22l.71.71M19.07 10.93l.71-.71M2 17h2M20 17h2"/>
+        </svg>
+        <span>LIGHT</span>
+      </button>
     </div>
 
     <!-- Footer content area -->
@@ -1220,6 +1377,41 @@ main {
         </div>
       </div>
     </div>
+
+      <!-- Light Section -->
+      <div id="light-section" class="footer-section">
+        <div class="settings-section-title">LED LIGHT</div>
+        <div class="settings-section-content">
+          <!-- Left: Power toggle -->
+          <div class="settings-section-left">
+            <div class="light-toggle-area">
+              <label style="font-size: 0.9rem; font-weight: 600; color: var(--text-light); margin-bottom: 0.5rem; display: block;">POWER</label>
+              <div class="toggle-switch light-switch">
+                <input type="checkbox" id="led-toggle">
+                <label for="led-toggle" class="toggle-label">
+                  <span class="toggle-text left">OFF</span>
+                  <span class="toggle-text right">ON</span>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Center: Brightness slider and presets -->
+          <div class="settings-section-slider-container" style="margin-left: 2cm;">
+            <div class="light-presets" style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+              <button class="light-preset-btn" data-value="25">25%</button>
+              <button class="light-preset-btn" data-value="50">50%</button>
+              <button class="light-preset-btn" data-value="75">75%</button>
+              <button class="light-preset-btn" data-value="100">100%</button>
+            </div>
+            <div class="settings-section-slider-group">
+              <label>Brightness: <span id="led-brightness-value">50</span>%</label>
+              <input type="range" id="led-brightness-slider" min="0" max="100" value="50" step="5">
+            </div>
+          </div>
+        </div>
+      </div>
   </footer>
 
   <script>
@@ -1258,9 +1450,14 @@ main {
       let focusMode = 'manual';  // Default to manual focus
       let hdrMode = 'normal';
       let photos = [];
+      let initialLoadComplete = false;  // Skip first exposure/focus update to prevent stream kill
       let currentIndex = -1;
       let modalMedia = null;
       const fullResCache = {};
+
+      // Dual camera state
+      let currentCamera = 'hq';
+      let autoSwitchEnabled = true;
 
       // Debounce timers for live preview updates
       let exposureDebounceTimer = null;
@@ -1563,6 +1760,9 @@ main {
       }
 
       async function updateLiveExposure() {
+        // Skip on initial page load to prevent killing the stream
+        if (!initialLoadComplete) return;
+
         // Clear existing timer
         clearTimeout(exposureDebounceTimer);
 
@@ -1630,6 +1830,9 @@ main {
       }
 
       async function updateLiveFocus() {
+        // Skip on initial page load to prevent killing the stream
+        if (!initialLoadComplete) return;
+
         // Clear existing timer
         clearTimeout(focusDebounceTimer);
 
@@ -1779,6 +1982,9 @@ main {
       updateFormatUI();
       updateFocusModeUI();
       updateHdrModeUI();
+
+      // Mark initial load complete after a short delay to allow stream to start
+      setTimeout(() => { initialLoadComplete = true; }, 2000);
 
       const thumbObserver = new IntersectionObserver(entries => {
         entries.forEach(entry => {
@@ -2748,6 +2954,130 @@ main {
       });
 
       // =====================================================================
+      // LED Light Controls
+      // =====================================================================
+      const ledToggle = document.getElementById('led-toggle');
+      const ledSlider = document.getElementById('led-brightness-slider');
+      const ledBrightnessValue = document.getElementById('led-brightness-value');
+      const ledToggleSlider = document.querySelector('#light-section .toggle-slider');
+      const ledToggleLabels = Array.from(document.querySelectorAll('#light-section .toggle-text'));
+      const ledPresetButtons = document.querySelectorAll('.light-preset-btn');
+
+      let ledDebounceTimer = null;
+
+      // Hide the checkbox
+      if (ledToggle) ledToggle.style.display = 'none';
+
+      // Update LED toggle UI
+      function updateLedToggleUI() {
+        const isOn = ledToggle && ledToggle.checked;
+        setKnobPositionFor(ledToggleSlider, isOn ? knobMax : knobMin, true);
+
+        ledToggleLabels.forEach(lbl => {
+          if (lbl.classList.contains('left')) {
+            lbl.style.color = isOn ? 'var(--switch-label-inactive)' : 'var(--switch-label-auto-active)';
+          } else if (lbl.classList.contains('right')) {
+            lbl.style.color = isOn ? 'var(--switch-label-manual-active)' : 'var(--switch-label-inactive)';
+          }
+        });
+
+        // Send LED on/off command
+        toggleLed(isOn);
+      }
+
+      // Toggle LED on/off
+      async function toggleLed(isOn) {
+        try {
+          const endpoint = isOn ? '/led/on' : '/led/off';
+          await fetch(endpoint, { method: 'POST' });
+          if (isOn) {
+            // Apply current brightness when turning on
+            const brightness = ledSlider ? ledSlider.value : 50;
+            await updateLedBrightness(brightness);
+          }
+        } catch (err) {
+          console.error('LED toggle failed:', err);
+        }
+      }
+
+      // Update LED brightness
+      async function updateLedBrightness(value) {
+        if (ledBrightnessValue) ledBrightnessValue.textContent = value;
+
+        // Only send if LED is on
+        if (ledToggle && !ledToggle.checked) return;
+
+        try {
+          const form = new FormData();
+          form.append('value', value);
+          await fetch('/led/brightness', { method: 'POST', body: form });
+        } catch (err) {
+          console.error('LED brightness update failed:', err);
+        }
+      }
+
+      // Set LED preset
+      async function setLedPreset(percent) {
+        if (ledSlider) ledSlider.value = percent;
+        if (ledBrightnessValue) ledBrightnessValue.textContent = percent;
+        if (ledToggle) ledToggle.checked = true;
+        updateLedToggleUI();
+
+        // Update preset button active states
+        ledPresetButtons.forEach(btn => {
+          btn.classList.toggle('active', parseInt(btn.dataset.value) === percent);
+        });
+      }
+
+      // LED toggle event handler
+      if (ledToggle) {
+        ledToggle.addEventListener('change', updateLedToggleUI);
+      }
+
+      // Attach drag to LED toggle slider
+      if (ledToggleSlider) {
+        attachDragToSlider(ledToggleSlider, ledToggle, updateLedToggleUI);
+      }
+
+      // LED brightness slider handler
+      if (ledSlider) {
+        ledSlider.addEventListener('input', (e) => {
+          const value = parseInt(e.target.value);
+          if (ledBrightnessValue) ledBrightnessValue.textContent = value;
+
+          // Clear preset active states
+          ledPresetButtons.forEach(btn => btn.classList.remove('active'));
+
+          // Debounce API calls
+          clearTimeout(ledDebounceTimer);
+          ledDebounceTimer = setTimeout(() => {
+            updateLedBrightness(value);
+          }, 100);
+        });
+
+        // Double-click to reset brightness to 50%
+        ledSlider.addEventListener('dblclick', () => {
+          ledSlider.value = 50;
+          if (ledBrightnessValue) ledBrightnessValue.textContent = '50';
+          updateLedBrightness(50);
+        });
+      }
+
+      // LED preset buttons
+      ledPresetButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const value = parseInt(btn.dataset.value);
+          setLedPreset(value);
+        });
+      });
+
+      // Initialize LED toggle UI
+      if (ledToggleSlider) {
+        updateLedToggleUI();
+      }
+
+
+      // =====================================================================
       // Camera Settings Display - Manual Refresh
       // =====================================================================
       const cameraSettings = document.getElementById('camera-settings');
@@ -3081,6 +3411,103 @@ main {
         alert('Failed to stop: ' + error.message);
       }
     }
+
+    // ---------------------------------------------------------------------
+    // Dual Camera Functions
+    // ---------------------------------------------------------------------
+    async function switchCamera() {
+      const toggle = document.getElementById('camera-toggle');
+      const target = toggle.checked ? 'v3' : 'hq';
+
+      try {
+        toggle.disabled = true;
+
+        const response = await fetch('/api/camera/switch', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({camera: target})
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          currentCamera = result.camera;
+
+          // Refresh video feed
+          const liveImg = document.getElementById('live-preview');
+          if (liveImg) {
+            setTimeout(() => {
+              liveImg.src = `/video_feed?_=${Date.now()}`;
+            }, 500);
+          }
+        } else {
+          const error = await response.json();
+          console.error('Camera switch failed:', error);
+          // Revert toggle on error
+          toggle.checked = (currentCamera === 'v3');
+          alert('Failed to switch camera: ' + (error.error || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Camera switch error:', error);
+        // Revert toggle on error
+        toggle.checked = (currentCamera === 'v3');
+        alert('Failed to switch camera: ' + error.message);
+      } finally {
+        toggle.disabled = false;
+      }
+    }
+
+    async function toggleAutoSwitch() {
+      const checkbox = document.getElementById('auto-switch-toggle');
+      const enabled = checkbox.checked;
+
+      try {
+        const response = await fetch('/api/camera/auto-switch', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({enabled: enabled})
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          autoSwitchEnabled = result.auto_switch;
+          checkbox.checked = autoSwitchEnabled;
+        } else {
+          // Revert checkbox on error
+          checkbox.checked = !enabled;
+          console.error('Auto-switch toggle failed');
+        }
+      } catch (error) {
+        checkbox.checked = !enabled;
+        console.error('Auto-switch toggle error:', error);
+      }
+    }
+
+    function updateCameraUI() {
+      const toggle = document.getElementById('camera-toggle');
+      if (toggle) {
+        toggle.checked = (currentCamera === 'v3');
+      }
+    }
+
+    async function loadCameraState() {
+      try {
+        const response = await fetch('/api/cameras');
+        if (response.ok) {
+          const data = await response.json();
+          currentCamera = data.current;
+          autoSwitchEnabled = data.auto_switch;
+          updateCameraUI();
+
+          const checkbox = document.getElementById('auto-switch-toggle');
+          if (checkbox) checkbox.checked = autoSwitchEnabled;
+        }
+      } catch (error) {
+        console.error('Failed to load camera state:', error);
+      }
+    }
+
+    // Load camera state on page load
+    loadCameraState();
 
     </script>
 

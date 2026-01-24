@@ -1,9 +1,9 @@
 from flask import Flask, Response, render_template, jsonify, send_from_directory, make_response, request
 import sys
-sys.path.insert(0, "/home/yourusername/manege")
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import TURNTABLE_IP, FLASK_HOST, FLASK_PORT, PHOTOS_BASE_DIR, STATIC_PHOTOS_DIR, ENABLE_TURNTABLE
 import subprocess
-import os
 import datetime
 import time
 import glob
@@ -33,10 +33,75 @@ current_wb_gains = None  # Format: (r_gain, b_gain) or None for auto
 current_saturation = None  # -100 to 100, None for auto (maps to 0.0-2.0 for rpicam)
 current_contrast = None  # -100 to 100, None for auto (maps to 0.0-2.0 for rpicam)
 
+# Dual camera configuration
+current_camera = "hq"  # "hq" (IMX477) or "v3" (IMX708)
+camera_ports = {"hq": 1, "v3": 0}  # Will be updated by detect_cameras()
+auto_switch_enabled = True  # Auto-switch to V3 when HQ is recording
+
 
 # ---------------------------------------------------------------------
 # Helper Functions
 # ---------------------------------------------------------------------
+def detect_cameras():
+    """
+    Detect available cameras and their CSI port assignments.
+    Parses output of rpicam-hello --list-cameras to find:
+    - imx477 (HQ camera with 16mm lens)
+    - imx708 (Camera Module V3)
+    """
+    global camera_ports
+
+    try:
+        result = subprocess.run(
+            ["rpicam-hello", "--list-cameras"],
+            capture_output=True, text=True, timeout=10
+        )
+        output = result.stderr + result.stdout  # libcamera outputs to stderr
+
+        # Parse camera indices
+        # Example output:
+        # 0 : imx477 [4056x3040] ...
+        # 1 : imx708 [4608x2592] ...
+
+        lines = output.split('\n')
+        for line in lines:
+            line_lower = line.lower()
+            # Look for camera index at start of line
+            if line.strip() and line.strip()[0].isdigit() and ':' in line:
+                parts = line.split(':')
+                if len(parts) >= 2:
+                    idx = int(parts[0].strip())
+                    camera_info = parts[1].lower()
+
+                    if 'imx477' in camera_info:
+                        camera_ports['hq'] = idx
+                        print(f"Detected HQ camera (IMX477) on port {idx}")
+                    elif 'imx708' in camera_info:
+                        camera_ports['v3'] = idx
+                        print(f"Detected V3 camera (IMX708) on port {idx}")
+
+        print(f"Camera ports configured: {camera_ports}")
+
+    except subprocess.TimeoutExpired:
+        print("Camera detection timeout - using defaults")
+    except Exception as e:
+        print(f"Camera detection error: {e} - using defaults")
+
+
+def start_backup_stream():
+    """Start V3 camera stream as backup while HQ is recording."""
+    global current_camera
+    if auto_switch_enabled and current_camera == "hq":
+        current_camera = "v3"
+        print("Auto-switched to V3 for preview during recording")
+
+
+def restore_primary_stream():
+    """Restore HQ camera stream after recording completes."""
+    global current_camera
+    if auto_switch_enabled and current_camera == "v3":
+        current_camera = "hq"
+        print("Auto-switched back to HQ after recording")
 def slider_to_rpicam_value(slider_val):
     """
     Convert slider value (-100 to 100) to rpicam value (0.0 to 2.0).
@@ -52,21 +117,26 @@ def slider_to_rpicam_value(slider_val):
 # ---------------------------------------------------------------------
 def generate_mjpeg():
     """Generate MJPEG stream from rpicam-vid."""
-    global current_focus_position, current_exposure_mode, current_shutter_speed, current_iso, current_wb_gains, current_saturation, current_contrast
+    global current_focus_position, current_exposure_mode, current_shutter_speed, current_iso, current_wb_gains, current_saturation, current_contrast, current_camera
 
-    print("Starting MJPEG stream generation")  # Debug log
+    camera_id = camera_ports.get(current_camera, 0)
+    print(f"Starting MJPEG stream generation on camera {current_camera} (port {camera_id})")
 
     cmd = [
         "rpicam-vid",
+        "--camera", str(camera_id),
         "-t", "0",
         "--width", "1920",
         "--height", "1080",
-        "--viewfinder-mode", "4056:3040",
         "--framerate", "25",
         "--codec", "mjpeg",
         "--nopreview",
         "-o", "-"
     ]
+
+    # Only use viewfinder-mode for HQ camera (IMX477 has higher resolution sensor)
+    if current_camera == "hq":
+        cmd += ["--viewfinder-mode", "4056:3040"]
 
     # Apply custom WB gains if set
     if current_wb_gains is not None:
@@ -220,7 +290,9 @@ def capture_photo():
         raw_path = os.path.join(dest_folder, f"{base_filename}.dng")
 
         # --- Build libcamera command ---
-        cmd = ["rpicam-still", "-t", "10", "--nopreview"]
+        camera_id = camera_ports.get(current_camera, 0)
+        cmd = ["rpicam-still", "--camera", str(camera_id), "-t", "10", "--nopreview"]
+        print(f"Capturing with camera {current_camera} (port {camera_id})")
 
         # --- HDR mode settings ---
         if hdr_mode == "hdr":
@@ -503,8 +575,10 @@ def sample_wb():
         # Capture a still frame for sampling with neutral AWB (no auto correction)
         # Allow time for AEC (auto exposure) to stabilize, but disable AWB
         temp_path = "/tmp/wb_sample.jpg"
+        camera_id = camera_ports.get(current_camera, 0)
         cmd = [
             "rpicam-still",
+            "--camera", str(camera_id),
             "-t", "500",  # Give camera time to adjust exposure
             "--nopreview",
             "--width", str(image_width),
@@ -741,6 +815,7 @@ def kill_camera_processes():
 def record_video():
     """
     Record a video with the Pi camera for a given duration (seconds).
+    Uses HQ camera for recording, auto-switches to V3 for preview if enabled.
     """
     try:
         duration = int(request.form.get("duration", 10))  # default 10s
@@ -751,19 +826,25 @@ def record_video():
         h264_path = os.path.join(folder, f"video_{timestamp}.h264")
         mp4_path = os.path.join(folder, f"video_{timestamp}.mp4")
 
-        # --- Stop live feed to free camera ---
+        # --- Stop live feed to free HQ camera ---
         subprocess.run(["pkill", "-f", "rpicam-vid"], stderr=subprocess.DEVNULL)
         time.sleep(1)
 
-        # --- Record video ---
+        # --- Auto-switch to V3 for preview during recording ---
+        start_backup_stream()
+
+        # --- Record video with HQ camera (always use HQ for recording) ---
+        hq_camera_id = camera_ports.get("hq", 0)
         cmd = [
             "rpicam-vid",
+            "--camera", str(hq_camera_id),
             "--width", "1920",
             "--height", "1080",
             "-t", str(duration * 1000),  # duration in milliseconds
             "--codec", "h264",
             "-o", h264_path
         ]
+        print(f"Recording video with HQ camera (port {hq_camera_id})")
 
         # --- Apply White Balance settings ---
         if current_wb_gains is not None:
@@ -809,6 +890,9 @@ def record_video():
             except Exception as e:
                 print(f"Warning: could not delete {h264_path}: {e}")
 
+        # --- Restore HQ camera for preview ---
+        restore_primary_stream()
+
         return jsonify({
             "message": "Video recorded successfully",
             "mp4": os.path.basename(mp4_path)
@@ -816,6 +900,7 @@ def record_video():
 
     except Exception as e:
         print("Video recording error:", e)
+        restore_primary_stream()  # Ensure we restore even on error
         return jsonify({"error": str(e)}), 500
 
 # ---------------------------------------------------------------------
@@ -972,8 +1057,10 @@ def camera_metadata():
         time.sleep(0.15)  # Minimal pause to ensure camera is freed
 
         # Capture metadata without saving image
+        camera_id = camera_ports.get(current_camera, 0)
         cmd = [
             "rpicam-still",
+            "--camera", str(camera_id),
             "--metadata", "-",
             "--metadata-format", "json",
             "--immediate",
@@ -1168,8 +1255,9 @@ def capture_360_sequence():
             jpeg_path = os.path.join(sequence_folder, f"{base_filename}.jpg")
             raw_path = os.path.join(sequence_folder, f"{base_filename}.dng")
 
-            # Build capture command
-            cmd = ["rpicam-still", "-t", "10", "--nopreview"]
+            # Build capture command - use HQ camera for 360 sequence
+            hq_camera_id = camera_ports.get("hq", 0)
+            cmd = ["rpicam-still", "--camera", str(hq_camera_id), "-t", "10", "--nopreview"]
 
             # Apply current camera settings
             if current_wb_gains is not None:
@@ -1253,6 +1341,7 @@ def capture_360_sequence():
 def record_360_video():
     """
     Record video while rotating 360°.
+    Uses HQ camera for recording, auto-switches to V3 for preview if enabled.
     Parameters:
     - duration: Duration in seconds for full 360° rotation (default: 30)
     - loop_mode: If '1', accelerate before recording and decelerate after (for seamless loops)
@@ -1281,9 +1370,12 @@ def record_360_video():
         h264_path = os.path.join(dest_folder, f"video_360_{timestamp}.h264")
         mp4_path = os.path.join(dest_folder, f"video_360_{timestamp}.mp4")
 
-        # --- Stop live feed to free camera ---
+        # --- Stop live feed to free HQ camera ---
         subprocess.run(["pkill", "-f", "rpicam-vid"], stderr=subprocess.DEVNULL)
         time.sleep(1)
+
+        # --- Auto-switch to V3 for preview during recording ---
+        start_backup_stream()
 
         if loop_mode:
             # Loop mode: Pre-position backwards, then accelerate forward through starting position
@@ -1320,15 +1412,18 @@ def record_360_video():
             # Add buffer to video duration to capture complete rotation
             video_duration_ms = (duration + 1) * 1000
 
-        # Start video recording
+        # Start video recording with HQ camera (always use HQ for recording)
+        hq_camera_id = camera_ports.get("hq", 0)
         cmd = [
             "rpicam-vid",
+            "--camera", str(hq_camera_id),
             "--width", "1920",
             "--height", "1080",
             "-t", str(video_duration_ms),  # milliseconds
             "--codec", "h264",
             "-o", h264_path
         ]
+        print(f"Recording 360° video with HQ camera (port {hq_camera_id})")
 
         # Apply current settings
         if current_wb_gains is not None:
@@ -1398,6 +1493,9 @@ def record_360_video():
         # Give a moment for cleanup before returning
         time.sleep(0.5)
 
+        # --- Restore HQ camera for preview ---
+        restore_primary_stream()
+
         return jsonify({
             "message": "360° video recorded successfully",
             "mp4": os.path.basename(mp4_path),
@@ -1406,12 +1504,115 @@ def record_360_video():
 
     except Exception as e:
         print(f"360° video error: {e}")
+        restore_primary_stream()  # Ensure we restore even on error
         return jsonify({"error": str(e)}), 500
 
 
 # ---------------------------------------------------------------------
+# Dual Camera API Endpoints
+# ---------------------------------------------------------------------
+@app.route('/api/cameras')
+def get_cameras():
+    """Return available cameras and current selection."""
+    return jsonify({
+        "current": current_camera,
+        "available": list(camera_ports.keys()),
+        "ports": camera_ports,
+        "auto_switch": auto_switch_enabled
+    })
+
+
+@app.route('/api/camera/switch', methods=['POST'])
+def switch_camera():
+    """Switch to specified camera."""
+    global current_camera
+
+    try:
+        data = request.get_json() or {}
+        target = data.get('camera', request.form.get('camera'))
+
+        if target not in camera_ports:
+            return jsonify({"error": f"Unknown camera: {target}"}), 400
+
+        # Kill existing stream
+        subprocess.run(["pkill", "-9", "-f", "rpicam-vid"], stderr=subprocess.DEVNULL)
+        time.sleep(0.5)
+
+        current_camera = target
+        print(f"Switched to camera: {current_camera} (port {camera_ports[current_camera]})")
+
+        return jsonify({
+            "message": f"Switched to {current_camera}",
+            "camera": current_camera,
+            "port": camera_ports[current_camera]
+        })
+
+    except Exception as e:
+        print(f"Camera switch error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/camera/auto-switch', methods=['POST'])
+def toggle_auto_switch():
+    """Toggle auto-switch feature."""
+    global auto_switch_enabled
+
+    try:
+        data = request.get_json() or {}
+        enabled = data.get('enabled', request.form.get('enabled'))
+
+        if enabled is not None:
+            auto_switch_enabled = str(enabled).lower() in ('true', '1', 'yes')
+        else:
+            auto_switch_enabled = not auto_switch_enabled
+
+        print(f"Auto-switch {'enabled' if auto_switch_enabled else 'disabled'}")
+
+        return jsonify({
+            "auto_switch": auto_switch_enabled
+        })
+
+    except Exception as e:
+        print(f"Auto-switch toggle error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+# ---------------------------------------------------------------------
+# LED Control Routes
+# ---------------------------------------------------------------------
+
+@app.route("/led/status", methods=["GET"])
+def led_status():
+    """Get current LED brightness."""
+    result = turntable_request("/led/status", method="GET")
+    return jsonify(result)
+
+@app.route("/led/on", methods=["POST"])
+def led_on():
+    """Turn LED on (full brightness or specified)."""
+    brightness = request.form.get("brightness")
+    params = {"brightness": brightness} if brightness else None
+    result = turntable_request("/led/on", params=params)
+    return jsonify(result)
+
+@app.route("/led/off", methods=["POST"])
+def led_off():
+    """Turn LED off."""
+    result = turntable_request("/led/off")
+    return jsonify(result)
+
+@app.route("/led/brightness", methods=["POST"])
+def led_brightness():
+    """Set LED brightness (0-100%)."""
+    value = request.form.get("value", 50)
+    result = turntable_request("/led/percent", params={"value": value})
+    return jsonify(result)
+
 # Run App
 # ---------------------------------------------------------------------
 if __name__ == '__main__':
+    # Detect available cameras at startup
+    detect_cameras()
+
     # Change '0.0.0.0' to '<PI_IP_ADDRESS>' to bind to ethernet only
     app.run(host=FLASK_HOST, port=FLASK_PORT, threaded=True)  # From config.py
