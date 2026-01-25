@@ -2768,6 +2768,7 @@ main {
       // =====================================================================
       // New Footer Tab System
       // =====================================================================
+      console.log('>>> Footer tab system starting');
       const footerTabBtns = document.querySelectorAll('.footer-tab-btn');
       const footerSections = document.querySelectorAll('.footer-section');
       const footerContent = document.querySelector('.footer-content');
@@ -2784,25 +2785,27 @@ main {
 
       // Function to switch tabs
       function switchTab(sectionId) {
-        // If clicking the same tab, toggle footer open/closed
-        if (currentActiveTab === sectionId) {
-          const isExpanded = footerContent.classList.contains('expanded');
-          footerContent.classList.toggle('expanded');
+        console.log('switchTab:', sectionId, 'current:', currentActiveTab, 'expanded:', footerContent.classList.contains('expanded'));
+        const isExpanded = footerContent.classList.contains('expanded');
+        const clickedBtn = document.querySelector(`[data-section="${sectionId}"]`);
 
-          // Update button active state based on expanded state
-          footerTabBtns.forEach(btn => {
-            if (btn.dataset.section === sectionId) {
-              btn.classList.toggle('active', !isExpanded);
-            }
-          });
+        // If clicking the same tab that's already active and footer is expanded, close it
+        if (currentActiveTab === sectionId && isExpanded) {
+          footerContent.classList.remove('expanded');
+          if (clickedBtn) clickedBtn.classList.remove('active');
 
-          // If closing footer, turn off eyedropper
-          if (isExpanded && wbPickerActive && wbPickerToggle) {
+          // Turn off eyedropper if closing
+          if (wbPickerActive && wbPickerToggle) {
             wbPickerToggle.checked = false;
             updateWbPickerUI();
           }
+          return;
+        }
 
-          // If closing, keep the same tab as active for next open
+        // If clicking the same tab but footer is closed, just open it
+        if (currentActiveTab === sectionId && !isExpanded) {
+          footerContent.classList.add('expanded');
+          if (clickedBtn) clickedBtn.classList.add('active');
           return;
         }
 
@@ -2832,9 +2835,12 @@ main {
       }
 
       // Add click handlers to all tab buttons
+      console.log('Setting up tab handlers, found buttons:', footerTabBtns.length);
       footerTabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
+        console.log('Adding handler to:', btn.dataset.section);
+        btn.addEventListener('click', (e) => {
           const sectionId = btn.dataset.section;
+          console.log('Tab clicked:', sectionId);
           switchTab(sectionId);
         });
       });
