@@ -3435,23 +3435,6 @@ main {
     // ---------------------------------------------------------------------
     // Dual Camera Functions
     // ---------------------------------------------------------------------
-
-    // Helper function to show/hide focus section based on camera type
-    function updateFocusSectionVisibility(camera) {
-      const focusControl = document.getElementById('focus-control');
-      const focusCarouselContainer = document.querySelector('.focus-carousel-container');
-
-      if (camera === 'hq') {
-        // HQ camera has 16mm manual lens - hide focus controls
-        if (focusControl) focusControl.style.display = 'none';
-        if (focusCarouselContainer) focusCarouselContainer.style.display = 'none';
-      } else {
-        // V3 camera has autofocus - show focus controls
-        if (focusControl) focusControl.style.display = '';
-        if (focusCarouselContainer) focusCarouselContainer.style.display = '';
-      }
-    }
-
     async function switchCamera() {
       const toggle = document.getElementById('camera-toggle');
       const target = toggle.checked ? 'v3' : 'hq';
@@ -3469,8 +3452,10 @@ main {
           const result = await response.json();
           currentCamera = result.camera;
 
-          // Update focus section visibility based on camera type
-          updateFocusSectionVisibility(result.camera);
+          // V3 has autofocus - hide focus section; HQ needs manual focus controls
+          const focusHidden = (result.camera === 'v3');
+          document.getElementById('focus-control').style.display = focusHidden ? 'none' : '';
+          document.querySelector('.focus-carousel-container').style.display = focusHidden ? 'none' : '';
 
           // Refresh video feed
           const liveImg = document.getElementById('live-preview');
@@ -3538,8 +3523,10 @@ main {
           autoSwitchEnabled = data.auto_switch;
           updateCameraUI();
 
-          // Update focus section visibility based on camera type
-          updateFocusSectionVisibility(data.current);
+          // V3 has autofocus - hide focus section; HQ needs manual focus controls
+          const focusHidden = (data.current === 'v3');
+          document.getElementById('focus-control').style.display = focusHidden ? 'none' : '';
+          document.querySelector('.focus-carousel-container').style.display = focusHidden ? 'none' : '';
 
           const checkbox = document.getElementById('auto-switch-toggle');
           if (checkbox) checkbox.checked = autoSwitchEnabled;
