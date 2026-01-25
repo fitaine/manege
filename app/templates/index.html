@@ -700,6 +700,7 @@ main {
   justify-content: center;
   gap: 2px;
   padding: 0 2%;
+  z-index: 10;
 }
 
 .footer-tab-btn {
@@ -1376,35 +1377,35 @@ main {
           </div>
         </div>
       </div>
-    </div>
 
       <!-- Light Section -->
       <div id="light-section" class="footer-section">
         <div class="settings-section-title">LED LIGHT</div>
         <div class="settings-section-content">
-          <!-- Left: Power toggle -->
-          <div class="settings-section-left">
-            <div class="light-toggle-area">
-              <label style="font-size: 0.9rem; font-weight: 600; color: var(--text-light); margin-bottom: 0.5rem; display: block;">POWER</label>
-              <div class="toggle-switch light-switch">
-                <input type="checkbox" id="led-toggle">
-                <label for="led-toggle" class="toggle-label">
-                  <span class="toggle-text left">OFF</span>
-                  <span class="toggle-text right">ON</span>
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
+          <!-- Far Left: On/Off toggle -->
+          <div class="settings-section-left" style="margin-right: 2cm;">
+            <div class="toggle-switch light-switch">
+              <input type="checkbox" id="led-toggle">
+              <label for="led-toggle" class="toggle-label">
+                <span class="toggle-text left">OFF</span>
+                <span class="toggle-text right">ON</span>
+                <span class="toggle-slider"></span>
+              </label>
             </div>
           </div>
 
-          <!-- Center: Brightness slider and presets -->
-          <div class="settings-section-slider-container" style="margin-left: 2cm;">
-            <div class="light-presets" style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+          <!-- Presets -->
+          <div class="settings-section-left">
+            <div class="settings-section-presets">
               <button class="light-preset-btn" data-value="25">25%</button>
               <button class="light-preset-btn" data-value="50">50%</button>
               <button class="light-preset-btn" data-value="75">75%</button>
               <button class="light-preset-btn" data-value="100">100%</button>
             </div>
+          </div>
+
+          <!-- Right: Slider -->
+          <div class="settings-section-slider-container" style="margin-left: 2cm;">
             <div class="settings-section-slider-group">
               <label>Brightness: <span id="led-brightness-value">50</span>%</label>
               <input type="range" id="led-brightness-slider" min="0" max="100" value="50" step="5">
@@ -1412,6 +1413,7 @@ main {
           </div>
         </div>
       </div>
+    </div>
   </footer>
 
   <script>
@@ -1707,20 +1709,6 @@ main {
       }
 
       ['ISO', 'Aperture', 'Shutter', 'Focus', 'EV'].forEach(createCarousel);
-
-      // Mouse wheel support for Focus carousel
-      (function() {
-        const fc = document.querySelector('.carousel-container[data-setting="Focus"]');
-        if (fc) {
-          const fl = fc.querySelector('.carousel-list');
-          if (fl) {
-            fc.addEventListener('wheel', (e) => {
-              e.preventDefault();
-              fl.scrollLeft += e.deltaY || e.deltaX;
-            }, { passive: false });
-          }
-        }
-      })();
 
       const exposureSlider = document.querySelector('#exposure-control .toggle-slider');
       const formatSlider = document.querySelector('#format-control .toggle-slider');
@@ -2799,27 +2787,23 @@ main {
 
       // Function to switch tabs
       function switchTab(sectionId) {
-        console.log('switchTab:', sectionId, 'current:', currentActiveTab, 'expanded:', footerContent.classList.contains('expanded'));
-        const isExpanded = footerContent.classList.contains('expanded');
-        const clickedBtn = document.querySelector(`[data-section="${sectionId}"]`);
+        // If clicking the same tab, toggle footer open/closed
+        if (currentActiveTab === sectionId) {
+          const isExpanded = footerContent.classList.contains('expanded');
+          footerContent.classList.toggle('expanded');
 
-        // If clicking the same tab that's already active and footer is expanded, close it
-        if (currentActiveTab === sectionId && isExpanded) {
-          footerContent.classList.remove('expanded');
-          if (clickedBtn) clickedBtn.classList.remove('active');
+          // Update button active state based on expanded state
+          footerTabBtns.forEach(btn => {
+            if (btn.dataset.section === sectionId) {
+              btn.classList.toggle('active', !isExpanded);
+            }
+          });
 
-          // Turn off eyedropper if closing
-          if (wbPickerActive && wbPickerToggle) {
+          // If closing footer, turn off eyedropper
+          if (isExpanded && wbPickerActive && wbPickerToggle) {
             wbPickerToggle.checked = false;
             updateWbPickerUI();
           }
-          return;
-        }
-
-        // If clicking the same tab but footer is closed, just open it
-        if (currentActiveTab === sectionId && !isExpanded) {
-          footerContent.classList.add('expanded');
-          if (clickedBtn) clickedBtn.classList.add('active');
           return;
         }
 
@@ -2849,13 +2833,10 @@ main {
       }
 
       // Add click handlers to all tab buttons
-      console.log('Setting up tab handlers, found buttons:', footerTabBtns.length);
       footerTabBtns.forEach(btn => {
-        console.log('Adding handler to:', btn.dataset.section);
         btn.addEventListener('click', (e) => {
-          const sectionId = btn.dataset.section;
-          console.log('Tab clicked:', sectionId);
-          switchTab(sectionId);
+          e.stopPropagation();
+          switchTab(btn.dataset.section);
         });
       });
 
@@ -3452,7 +3433,7 @@ main {
           const result = await response.json();
           currentCamera = result.camera;
 
-          // V3 autofocus: hide focus section
+          // HQ has manual lens - hide focus section; V3 has autofocus - show it
           document.getElementById('focus-control').style.display = (result.camera === 'hq') ? 'none' : '';
           document.querySelector('.focus-carousel-container').style.display = (result.camera === 'hq') ? 'none' : '';
 
@@ -3522,7 +3503,7 @@ main {
           autoSwitchEnabled = data.auto_switch;
           updateCameraUI();
 
-          // V3 autofocus: hide focus section
+          // HQ has manual lens - hide focus section; V3 has autofocus - show it
           document.getElementById('focus-control').style.display = (data.current === 'hq') ? 'none' : '';
           document.querySelector('.focus-carousel-container').style.display = (data.current === 'hq') ? 'none' : '';
 
