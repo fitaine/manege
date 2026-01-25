@@ -1376,7 +1376,6 @@ main {
           </div>
         </div>
       </div>
-    </div>
 
       <!-- Light Section -->
       <div id="light-section" class="footer-section">
@@ -1412,6 +1411,7 @@ main {
           </div>
         </div>
       </div>
+    </div>
   </footer>
 
   <script>
@@ -1707,6 +1707,36 @@ main {
       }
 
       ['ISO', 'Aperture', 'Shutter', 'Focus', 'EV'].forEach(createCarousel);
+
+      // Add mouse wheel support for the Focus carousel (horizontal)
+      const focusCarouselContainer = document.querySelector('.carousel-container[data-setting="Focus"]');
+      if (focusCarouselContainer) {
+        const focusList = focusCarouselContainer.querySelector('.carousel-list');
+        if (focusList) {
+          focusCarouselContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            // Translate vertical wheel to horizontal scroll
+            const delta = e.deltaY || e.deltaX;
+            focusList.scrollLeft += delta;
+          }, { passive: false });
+        }
+      }
+
+      // Helper function to show/hide focus section based on camera type
+      function updateFocusSectionVisibility(camera) {
+        const focusControl = document.getElementById('focus-control');
+        const focusCarouselContainer = document.querySelector('.focus-carousel-container');
+
+        if (camera === 'hq') {
+          // HQ camera has 16mm manual lens - hide focus controls
+          if (focusControl) focusControl.style.display = 'none';
+          if (focusCarouselContainer) focusCarouselContainer.style.display = 'none';
+        } else {
+          // V3 camera has autofocus - show focus controls
+          if (focusControl) focusControl.style.display = '';
+          if (focusCarouselContainer) focusCarouselContainer.style.display = '';
+        }
+      }
 
       const exposureSlider = document.querySelector('#exposure-control .toggle-slider');
       const formatSlider = document.querySelector('#format-control .toggle-slider');
@@ -3438,6 +3468,9 @@ main {
           const result = await response.json();
           currentCamera = result.camera;
 
+          // Update focus section visibility based on camera type
+          updateFocusSectionVisibility(result.camera);
+
           // Refresh video feed
           const liveImg = document.getElementById('live-preview');
           if (liveImg) {
@@ -3503,6 +3536,9 @@ main {
           currentCamera = data.current;
           autoSwitchEnabled = data.auto_switch;
           updateCameraUI();
+
+          // Update focus section visibility based on camera type
+          updateFocusSectionVisibility(data.current);
 
           const checkbox = document.getElementById('auto-switch-toggle');
           if (checkbox) checkbox.checked = autoSwitchEnabled;
