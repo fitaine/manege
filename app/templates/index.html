@@ -166,6 +166,13 @@ main {
   padding-top: 1rem;
 }
 
+/* Video wrapper for overlay positioning */
+.video-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
 .stream-container img {
   max-height: 90vh;
   max-width: 97%;
@@ -173,8 +180,7 @@ main {
   border-radius: 6px;
   box-shadow: 0 0 15px var(--overlay-dark);
   object-fit: contain;
-  margin-bottom: 1rem;
-  z-index: 1;
+  display: block;
 }
 
 /* Camera Settings Display - Horizontal below video */
@@ -230,13 +236,96 @@ main {
   color: #cc3333;
 }
 
-/* Camera Switch Container */
+/* Camera Switch Container - hidden, replaced by overlay button */
 .camera-switch-container {
+  display: none;
+}
+
+/* Header Camera Info */
+.header-camera-info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+.header-camera-info .info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.header-camera-info .info-label {
+  opacity: 0.7;
+  font-size: 0.8rem;
+}
+
+.header-camera-info .info-value {
+  font-weight: 600;
+}
+
+.header-camera-info .refresh-btn {
+  background: var(--panel-dark);
+  border: 1px solid var(--border-light);
+  color: var(--text-light);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: 'Nunito Sans', sans-serif;
+  transition: background-color 0.2s ease;
+}
+
+.header-camera-info .refresh-btn:hover {
+  background: var(--accent-green);
+}
+
+.header-camera-info.error .info-value {
+  color: #cc3333;
+}
+
+/* Lens Switch Overlay Button - positioned on video */
+.lens-switch-overlay {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--border-light);
+  border-radius: 50%;
+  width: 54px;
+  height: 54px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.lens-switch-overlay:hover {
+  background: rgba(0, 0, 0, 0.85);
+  transform: scale(1.1);
+  border-color: var(--highlight);
+}
+
+.lens-switch-overlay svg {
+  width: 32px;
+  height: 32px;
+  fill: var(--text-light);
+  color: var(--text-light);
+}
+
+.lens-switch-overlay .lens-label {
+  position: absolute;
+  bottom: -20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-light);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2px 6px;
+  border-radius: 3px;
 }
 
 /* Camera toggle switch - matches existing toggle style */
@@ -999,7 +1088,25 @@ main {
 <body>
   <header style="display:flex; justify-content:space-between; align-items:center;">
     <div>Manège</div>
-    <div id="last-modified" style="text-align:center; font-size: 1rem; font-style: italic; font-weight: 400;"></div>
+    <div class="header-camera-info" id="header-camera-info">
+      <div class="info-item">
+        <span class="info-label">ISO:</span>
+        <span class="info-value" id="header-iso">--</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Speed:</span>
+        <span class="info-value" id="header-speed">--</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">WB:</span>
+        <span class="info-value" id="header-wb">--</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Tint:</span>
+        <span class="info-value" id="header-tint">--</span>
+      </div>
+      <button class="refresh-btn" id="header-refresh-btn" title="Refresh camera settings">↻ Refresh</button>
+    </div>
     <div id="status-info" style="font-size: 1rem; font-style: normal; font-weight: 400;"></div>
   </header>
 
@@ -1080,47 +1187,29 @@ main {
 
     <div class="stream-container">
       <div class="stream-overlay" id="capture-overlay">Capturing...</div>
-      <img id="live-preview" src="/video_feed" alt="Live Stream" loading="lazy">
 
-      <!-- Camera Settings Display - Horizontal below video -->
-      <div class="camera-settings" id="camera-settings">
-        <div class="settings-title">
-          CAMERA
-          <button id="fetch-settings-btn" style="background: var(--panel-dark); border: 1px solid var(--wb-border); color: var(--text-light); padding: 0.2rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-family: 'Nunito Sans', sans-serif;">Refresh</button>
-        </div>
-        <div class="settings-row">
-          <span class="settings-label">ISO:</span>
-          <span class="settings-value" id="settings-iso">--</span>
-        </div>
-        <div class="settings-row">
-          <span class="settings-label">Speed:</span>
-          <span class="settings-value" id="settings-speed">--</span>
-        </div>
-        <div class="settings-row">
-          <span class="settings-label">WB:</span>
-          <span class="settings-value" id="settings-wb">--</span>
-        </div>
-        <div class="settings-row">
-          <span class="settings-label">Tint:</span>
-          <span class="settings-value" id="settings-tint">--</span>
-        </div>
+      <!-- Video wrapper for overlay positioning -->
+      <div class="video-wrapper">
+        <img id="live-preview" src="/video_feed" alt="Live Stream" loading="lazy">
+
+        <!-- Lens Switch Overlay Button -->
+        <button class="lens-switch-overlay" id="lens-switch-btn" onclick="switchCamera()" title="Switch camera lens">
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <!-- Circular arrows -->
+            <path d="M24 8V2l-8 8 8 8v-6c6.63 0 12 5.37 12 12 0 2.02-.5 3.93-1.4 5.6l2.92 2.92C39.08 30.05 40 27.14 40 24c0-8.84-7.16-16-16-16z"/>
+            <path d="M24 40c-6.63 0-12-5.37-12-12 0-2.02.5-3.93 1.4-5.6l-2.92-2.92C8.92 21.95 8 24.86 8 28c0 8.84 7.16 16 16 16v6l8-8-8-8v6z"/>
+            <!-- Camera icon in center -->
+            <rect x="15" y="18" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="24" cy="24" r="3" fill="currentColor"/>
+            <rect x="19" y="16" width="6" height="2" rx="1"/>
+          </svg>
+          <span class="lens-label" id="current-lens-label">HQ</span>
+        </button>
       </div>
 
-      <!-- Camera Switch Toggle -->
-      <div class="camera-switch-container">
-        <div class="toggle-switch camera-switch">
-          <input type="checkbox" id="camera-toggle" onchange="switchCamera()">
-          <label for="camera-toggle" class="toggle-label">
-            <span class="toggle-text left">HQ</span>
-            <span class="toggle-text right">V3</span>
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-        <label class="auto-switch-label">
-          <input type="checkbox" id="auto-switch-toggle" checked onchange="toggleAutoSwitch()">
-          Auto
-        </label>
-      </div>
+      <!-- Hidden elements for compatibility -->
+      <input type="checkbox" id="camera-toggle" style="display:none;">
+      <input type="checkbox" id="auto-switch-toggle" checked style="display:none;">
     </div>
 
     <div class="side-panel right-panel">
@@ -1434,7 +1523,6 @@ main {
       const formatToggle = document.getElementById('format-toggle');
       const focusToggle = document.getElementById('focus-toggle');
       const hdrToggle = document.getElementById('hdr-toggle');
-      const lastModifiedBox = document.getElementById('last-modified');
       const statusInfoBox = document.getElementById('status-info');
 
       if (!overlay || !liveImg) {
@@ -2168,22 +2256,7 @@ main {
       updateDateTimeStorage();
       setInterval(updateDateTimeStorage, 60000);
 
-      async function fetchLastModified() {
-        try {
-          const resp = await fetch('/last_modified');
-          const data = await resp.json();
-          if (resp.ok && data.last_modified) {
-            const last = new Date(data.last_modified * 1000);
-            lastModifiedBox.textContent = `Last modified: ${last.toLocaleString('fr-FR', { weekday:'short', year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' })}`;
-          } else {
-            lastModifiedBox.textContent = 'Last modified: ?';
-          }
-        } catch (e) {
-          console.error('fetchLastModified', e);
-          lastModifiedBox.textContent = 'Last modified: ?';
-        }
-      }
-      fetchLastModified();
+      // Last modified section removed - camera info now in header
 
       // Load available folders into dropdown
       async function loadFolderList() {
@@ -3079,14 +3152,14 @@ main {
 
 
       // =====================================================================
-      // Camera Settings Display - Manual Refresh
+      // Camera Settings Display - Header (Manual Refresh)
       // =====================================================================
-      const cameraSettings = document.getElementById('camera-settings');
-      const settingsISO = document.getElementById('settings-iso');
-      const settingsSpeed = document.getElementById('settings-speed');
-      const settingsWB = document.getElementById('settings-wb');
-      const settingsTint = document.getElementById('settings-tint');
-      const fetchSettingsBtn = document.getElementById('fetch-settings-btn');
+      const headerCameraInfo = document.getElementById('header-camera-info');
+      const settingsISO = document.getElementById('header-iso');
+      const settingsSpeed = document.getElementById('header-speed');
+      const settingsWB = document.getElementById('header-wb');
+      const settingsTint = document.getElementById('header-tint');
+      const fetchSettingsBtn = document.getElementById('header-refresh-btn');
 
       async function fetchCameraMetadata() {
         try {
@@ -3101,7 +3174,7 @@ main {
 
           if (data.error) {
             // Show error state
-            cameraSettings.classList.add('error');
+            headerCameraInfo.classList.add('error');
             settingsISO.textContent = '--';
             settingsSpeed.textContent = '--';
             settingsWB.textContent = '--';
@@ -3111,7 +3184,7 @@ main {
           }
 
           // Update UI with new values
-          cameraSettings.classList.remove('error');
+          headerCameraInfo.classList.remove('error');
           settingsISO.textContent = data.iso;
           settingsSpeed.textContent = data.shutter_speed;
           settingsWB.textContent = `${data.wb_temp}K`;
@@ -3139,7 +3212,7 @@ main {
 
         } catch (err) {
           console.error('Failed to fetch camera metadata:', err);
-          cameraSettings.classList.add('error');
+          headerCameraInfo.classList.add('error');
           settingsISO.textContent = '--';
           settingsSpeed.textContent = '--';
           settingsWB.textContent = '--';
@@ -3418,10 +3491,14 @@ main {
     // ---------------------------------------------------------------------
     async function switchCamera() {
       const toggle = document.getElementById('camera-toggle');
-      const target = toggle.checked ? 'v3' : 'hq';
+      const lensLabel = document.getElementById('current-lens-label');
+      const lensSwitchBtn = document.getElementById('lens-switch-btn');
+
+      // Toggle between cameras
+      const target = (currentCamera === 'hq') ? 'v3' : 'hq';
 
       try {
-        toggle.disabled = true;
+        if (lensSwitchBtn) lensSwitchBtn.style.opacity = '0.5';
 
         const response = await fetch('/api/camera/switch', {
           method: 'POST',
@@ -3432,6 +3509,14 @@ main {
         if (response.ok) {
           const result = await response.json();
           currentCamera = result.camera;
+
+          // Update lens label
+          if (lensLabel) {
+            lensLabel.textContent = result.camera.toUpperCase();
+          }
+
+          // Update hidden toggle for compatibility
+          if (toggle) toggle.checked = (result.camera === 'v3');
 
           // HQ has manual lens - hide focus section; V3 has autofocus - show it
           document.getElementById('focus-control').style.display = (result.camera === 'hq') ? 'none' : '';
@@ -3447,17 +3532,13 @@ main {
         } else {
           const error = await response.json();
           console.error('Camera switch failed:', error);
-          // Revert toggle on error
-          toggle.checked = (currentCamera === 'v3');
           alert('Failed to switch camera: ' + (error.error || 'Unknown error'));
         }
       } catch (error) {
         console.error('Camera switch error:', error);
-        // Revert toggle on error
-        toggle.checked = (currentCamera === 'v3');
         alert('Failed to switch camera: ' + error.message);
       } finally {
-        toggle.disabled = false;
+        if (lensSwitchBtn) lensSwitchBtn.style.opacity = '1';
       }
     }
 

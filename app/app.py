@@ -122,12 +122,20 @@ def generate_mjpeg():
     camera_id = camera_ports.get(current_camera, 0)
     print(f"Starting MJPEG stream generation on camera {current_camera} (port {camera_id})")
 
+    # Set resolution based on camera aspect ratio
+    if current_camera == "hq":
+        # HQ camera (IMX477) is 4:3 aspect ratio
+        width, height = "1440", "1080"
+    else:
+        # V3 camera (IMX708) is 16:9 aspect ratio
+        width, height = "1920", "1080"
+
     cmd = [
         "rpicam-vid",
         "--camera", str(camera_id),
         "-t", "0",
-        "--width", "1920",
-        "--height", "1080",
+        "--width", width,
+        "--height", height,
         "--framerate", "25",
         "--codec", "mjpeg",
         "--nopreview",
