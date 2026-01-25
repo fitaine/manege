@@ -1722,22 +1722,6 @@ main {
         }
       }
 
-      // Helper function to show/hide focus section based on camera type
-      function updateFocusSectionVisibility(camera) {
-        const focusControl = document.getElementById('focus-control');
-        const focusCarouselContainer = document.querySelector('.focus-carousel-container');
-
-        if (camera === 'hq') {
-          // HQ camera has 16mm manual lens - hide focus controls
-          if (focusControl) focusControl.style.display = 'none';
-          if (focusCarouselContainer) focusCarouselContainer.style.display = 'none';
-        } else {
-          // V3 camera has autofocus - show focus controls
-          if (focusControl) focusControl.style.display = '';
-          if (focusCarouselContainer) focusCarouselContainer.style.display = '';
-        }
-      }
-
       const exposureSlider = document.querySelector('#exposure-control .toggle-slider');
       const formatSlider = document.querySelector('#format-control .toggle-slider');
       const focusSlider = document.querySelector('#focus-control .toggle-slider');
@@ -3451,6 +3435,23 @@ main {
     // ---------------------------------------------------------------------
     // Dual Camera Functions
     // ---------------------------------------------------------------------
+
+    // Helper function to show/hide focus section based on camera type
+    function updateFocusSectionVisibility(camera) {
+      const focusControl = document.getElementById('focus-control');
+      const focusCarouselContainer = document.querySelector('.focus-carousel-container');
+
+      if (camera === 'hq') {
+        // HQ camera has 16mm manual lens - hide focus controls
+        if (focusControl) focusControl.style.display = 'none';
+        if (focusCarouselContainer) focusCarouselContainer.style.display = 'none';
+      } else {
+        // V3 camera has autofocus - show focus controls
+        if (focusControl) focusControl.style.display = '';
+        if (focusCarouselContainer) focusCarouselContainer.style.display = '';
+      }
+    }
+
     async function switchCamera() {
       const toggle = document.getElementById('camera-toggle');
       const target = toggle.checked ? 'v3' : 'hq';
