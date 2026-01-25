@@ -1376,6 +1376,7 @@ main {
           </div>
         </div>
       </div>
+    </div>
 
       <!-- Light Section -->
       <div id="light-section" class="footer-section">
@@ -1411,7 +1412,6 @@ main {
           </div>
         </div>
       </div>
-    </div>
   </footer>
 
   <script>
@@ -1708,19 +1708,19 @@ main {
 
       ['ISO', 'Aperture', 'Shutter', 'Focus', 'EV'].forEach(createCarousel);
 
-      // Add mouse wheel support for the Focus carousel (horizontal)
-      const focusCarouselContainer = document.querySelector('.carousel-container[data-setting="Focus"]');
-      if (focusCarouselContainer) {
-        const focusList = focusCarouselContainer.querySelector('.carousel-list');
-        if (focusList) {
-          focusCarouselContainer.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            // Translate vertical wheel to horizontal scroll
-            const delta = e.deltaY || e.deltaX;
-            focusList.scrollLeft += delta;
-          }, { passive: false });
+      // Mouse wheel support for Focus carousel
+      (function() {
+        const fc = document.querySelector('.carousel-container[data-setting="Focus"]');
+        if (fc) {
+          const fl = fc.querySelector('.carousel-list');
+          if (fl) {
+            fc.addEventListener('wheel', (e) => {
+              e.preventDefault();
+              fl.scrollLeft += e.deltaY || e.deltaX;
+            }, { passive: false });
+          }
         }
-      }
+      })();
 
       const exposureSlider = document.querySelector('#exposure-control .toggle-slider');
       const formatSlider = document.querySelector('#format-control .toggle-slider');
@@ -3452,10 +3452,9 @@ main {
           const result = await response.json();
           currentCamera = result.camera;
 
-          // V3 has autofocus - hide focus section; HQ needs manual focus controls
-          const focusHidden = (result.camera === 'v3');
-          document.getElementById('focus-control').style.display = focusHidden ? 'none' : '';
-          document.querySelector('.focus-carousel-container').style.display = focusHidden ? 'none' : '';
+          // V3 autofocus: hide focus section
+          document.getElementById('focus-control').style.display = (result.camera === 'hq') ? 'none' : '';
+          document.querySelector('.focus-carousel-container').style.display = (result.camera === 'hq') ? 'none' : '';
 
           // Refresh video feed
           const liveImg = document.getElementById('live-preview');
@@ -3523,10 +3522,9 @@ main {
           autoSwitchEnabled = data.auto_switch;
           updateCameraUI();
 
-          // V3 has autofocus - hide focus section; HQ needs manual focus controls
-          const focusHidden = (data.current === 'v3');
-          document.getElementById('focus-control').style.display = focusHidden ? 'none' : '';
-          document.querySelector('.focus-carousel-container').style.display = focusHidden ? 'none' : '';
+          // V3 autofocus: hide focus section
+          document.getElementById('focus-control').style.display = (data.current === 'hq') ? 'none' : '';
+          document.querySelector('.focus-carousel-container').style.display = (data.current === 'hq') ? 'none' : '';
 
           const checkbox = document.getElementById('auto-switch-toggle');
           if (checkbox) checkbox.checked = autoSwitchEnabled;
