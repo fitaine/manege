@@ -300,9 +300,8 @@ main {
   width: 50px;
   height: 50px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
@@ -314,20 +313,11 @@ main {
 }
 
 .lens-switch-overlay svg {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   fill: var(--text-light);
   color: var(--text-light);
 }
-
-.lens-switch-overlay .lens-label {
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: var(--text-light);
-  margin-top: 2px;
-  line-height: 1;
-}
-
 /* Camera toggle switch - matches existing toggle style */
 .camera-switch {
   position: relative;
@@ -577,7 +567,7 @@ main {
 
 #format-control, #exposure-control, #focus-control, #hdr-control {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 }
 
@@ -1193,17 +1183,14 @@ main {
         <img id="live-preview" src="/video_feed" alt="Live Stream" loading="lazy">
 
         <!-- Lens Switch Overlay Button -->
-        <button class="lens-switch-overlay" id="lens-switch-btn" onclick="switchCamera()" title="Switch camera lens">
-          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-            <!-- Circular arrows -->
-            <path d="M24 8V2l-8 8 8 8v-6c6.63 0 12 5.37 12 12 0 2.02-.5 3.93-1.4 5.6l2.92 2.92C39.08 30.05 40 27.14 40 24c0-8.84-7.16-16-16-16z"/>
-            <path d="M24 40c-6.63 0-12-5.37-12-12 0-2.02.5-3.93 1.4-5.6l-2.92-2.92C8.92 21.95 8 24.86 8 28c0 8.84 7.16 16 16 16v6l8-8-8-8v6z"/>
-            <!-- Camera icon in center -->
-            <rect x="15" y="18" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-            <circle cx="24" cy="24" r="3" fill="currentColor"/>
-            <rect x="19" y="16" width="6" height="2" rx="1"/>
+        <button class="lens-switch-overlay" id="lens-switch-btn" onclick="switchCamera()" title="Switch camera">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+            <!-- Camera body -->
+            <path d="M20 5h-3.17L15 3H9L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 14H4V7h4.05l1.83-2h4.24l1.83 2H20v12z"/>
+            <!-- Circular arrows inside camera -->
+            <path d="M12 9c-2.21 0-4 1.79-4 4 0 .55.11 1.07.3 1.55l-.9.9C7.15 14.71 7 13.88 7 13c0-2.76 2.24-5 5-5v-1.5l2.5 2.5L12 11.5V9z"/>
+            <path d="M16.7 11.45l.9-.9c.25.74.4 1.57.4 2.45 0 2.76-2.24 5-5 5v1.5L10.5 17l2.5-2.5V16c2.21 0 4-1.79 4-4 0-.55-.11-1.07-.3-1.55z"/>
           </svg>
-          <span class="lens-label" id="current-lens-label">HQ</span>
         </button>
       </div>
 
