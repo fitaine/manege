@@ -140,7 +140,7 @@ main {
 .right-panel button {
   width: 70%;
   align-self: center;
-  padding: 0.75rem 1.5rem;
+  padding: 0.4rem 1.5rem;
   font-size: 0.9rem;
   font-weight: 400;
   border-radius: 999px;
@@ -159,29 +159,30 @@ main {
   position: relative;
   flex: 1;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  align-items: flex-start;
+  justify-content: center;
   background-color: var(--panel-dark);
-  padding-top: 1rem;
+  padding: 0.4rem 1.5rem;
 }
 
-/* Video wrapper for overlay positioning */
+/* Video wrapper - contains image and overlay button */
 .video-wrapper {
   position: relative;
-  display: inline-block;
-  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
-.stream-container img {
-  max-height: 90vh;
-  max-width: 97%;
+.video-wrapper img {
+  max-height: 85vh;
+  max-width: 100%;
   border: 3px solid var(--background-dark);
   border-radius: 6px;
-  box-shadow: 0 0 15px var(--overlay-dark);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   object-fit: contain;
   display: block;
 }
+
 
 /* Camera Settings Display - Horizontal below video */
 .camera-settings {
@@ -193,7 +194,7 @@ main {
   display: flex;
   align-items: center;
   gap: 2rem;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .camera-settings .settings-title {
@@ -286,46 +287,45 @@ main {
   color: #cc3333;
 }
 
-/* Lens Switch Overlay Button - positioned on video */
+
+/* Lens Switch Overlay Button - fully inside video */
 .lens-switch-overlay {
   position: absolute;
-  bottom: 15px;
-  right: 15px;
+  bottom: 12px;
+  right: 40px;
   z-index: 10;
   background: rgba(0, 0, 0, 0.6);
   border: 2px solid var(--border-light);
   border-radius: 50%;
-  width: 54px;
-  height: 54px;
+  width: 50px;
+  height: 50px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 .lens-switch-overlay:hover {
   background: rgba(0, 0, 0, 0.85);
-  transform: scale(1.1);
+  transform: scale(1.05);
   border-color: var(--highlight);
 }
 
 .lens-switch-overlay svg {
-  width: 32px;
-  height: 32px;
+  width: 20px;
+  height: 20px;
   fill: var(--text-light);
   color: var(--text-light);
 }
 
 .lens-switch-overlay .lens-label {
-  position: absolute;
-  bottom: -20px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.6rem;
+  font-weight: 700;
   color: var(--text-light);
-  background: rgba(0, 0, 0, 0.7);
-  padding: 2px 6px;
-  border-radius: 3px;
+  margin-top: 2px;
+  line-height: 1;
 }
 
 /* Camera toggle switch - matches existing toggle style */
@@ -422,7 +422,7 @@ main {
   font-weight: bold;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   border-radius: 8px;
   opacity: 0;
   pointer-events: none;
@@ -438,7 +438,7 @@ main {
   background: var(--modal-overlay);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   z-index: 1000;
   cursor: pointer;
 }
@@ -503,8 +503,8 @@ main {
 .carousel-arrow:hover { background: var(--arrow-hover-bg); }
 
 #exposure-control, #focus-control { color: var(--text-light); user-select: none; }
-.exposure-carousels { display: flex; justify-content: center; gap: 2rem; margin: 0 auto; max-width: 280px; }
-.focus-carousel-container { display: flex; justify-content: center; margin-top: 1rem; }
+.exposure-carousels { display: flex; justify-content: flex-start; gap: 2rem; margin: 0 auto; max-width: 280px; }
+.focus-carousel-container { display: flex; justify-content: flex-start; margin-top: 1rem; }
 
 .carousel-container { position: relative; width: 70px; height: 180px; background: linear-gradient(to bottom, var(--carousel-gradient-start), var(--carousel-gradient-mid), var(--carousel-gradient-end)); border: 2px solid var(--border-light); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; align-items: center; font-family: 'Nunito Sans', sans-serif; box-shadow: inset 0 6px 10px var(--overlay-dark), inset 0 -6px 10px var(--overlay-dark); transition: filter 0.3s ease, opacity 0.3s ease; }
 
@@ -577,7 +577,7 @@ main {
 
 #format-control, #exposure-control, #focus-control, #hdr-control {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 }
 
@@ -843,7 +843,7 @@ main {
 /* Tab sections inside footer */
 .footer-section {
   display: none;
-  padding: 1.5rem;
+  padding: 0.4rem 1.5rem;
   padding-top: 0.8rem;
   background-color: var(--panel-light);
 }
@@ -1052,7 +1052,7 @@ main {
 .light-toggle-area {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .light-presets {
