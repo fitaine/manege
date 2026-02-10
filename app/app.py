@@ -908,6 +908,8 @@ def record_video():
 
     except Exception as e:
         print("Video recording error:", e)
+        # Stop turntable on error to prevent endless spinning
+        turntable_request('/stop')
         restore_primary_stream()  # Ensure we restore even on error
         return jsonify({"error": str(e)}), 500
 
@@ -1160,6 +1162,55 @@ def turntable_request(endpoint, method='POST', params=None):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
+
+def turntable_rotate_and_wait(degrees, settle_time=1.0, timeout=60):
+    """
+    Send rotation command and wait for completion by polling status.
+    The ESP32 blocking endpoints drop the HTTP connection before responding,
+    but the motor still rotates. This helper polls /status until done.
+    """
+    # Send rotation command (response may fail due to ESP32 blocking behavior)
+    turntable_request('/rotate_degrees', params={'degrees': degrees})
+
+    # Poll status until turntable stops moving
+    poll_interval = 0.5
+    waited = 0.0
+    time.sleep(0.5)  # Brief delay for ESP32 to register movement
+
+    while waited < timeout:
+        status = turntable_request('/status', method='GET')
+        if status.get('status') != 'error':
+            if not status.get('is_moving', True) and status.get('distance_to_go', 1) == 0:
+                time.sleep(settle_time)
+                return {"status": "success", "message": f"Rotated {degrees} degrees"}
+        time.sleep(poll_interval)
+        waited += poll_interval
+
+    return {"status": "error", "message": "Turntable rotation timeout"}
+
+
+def turntable_home_and_wait(timeout=60):
+    """
+    Send home command and wait for completion by polling status.
+    """
+    turntable_request('/home')
+
+    poll_interval = 0.5
+    waited = 0.0
+    time.sleep(0.5)
+
+    while waited < timeout:
+        status = turntable_request('/status', method='GET')
+        if status.get('status') != 'error':
+            if not status.get('is_moving', True) and status.get('distance_to_go', 1) == 0:
+                time.sleep(0.5)
+                return {"status": "success"}
+        time.sleep(poll_interval)
+        waited += poll_interval
+
+    return {"status": "error", "message": "Turntable home timeout"}
+
+
 @app.route('/turntable/status')
 def turntable_status():
     """Get turntable status."""
@@ -1252,8 +1303,7 @@ def capture_360_sequence():
         time.sleep(1)
 
         # Return to home position first
-        turntable_request('/home')
-        time.sleep(2)
+        turntable_home_and_wait()
 
         for i in range(photo_count):
             # Capture photo
@@ -1315,21 +1365,15 @@ def capture_360_sequence():
 
             # Rotate to next position (except after last photo)
             if i < photo_count - 1:
-                rotate_result = turntable_request('/rotate_degrees', params={'degrees': degrees_per_photo})
+                rotate_result = turntable_rotate_and_wait(degrees_per_photo)
                 if rotate_result.get('status') == 'error':
                     return jsonify({
                         "error": "Turntable rotation failed",
                         "details": rotate_result
                     }), 500
 
-                time.sleep(1)  # Settle time after rotation
-
         # Return to home
-        turntable_request('/home')
-
-        # Note: Live stream will restart automatically when browser requests /video_feed
-        # Give a moment for cleanup before returning
-        time.sleep(0.5)
+        turntable_home_and_wait()
 
         return jsonify({
             "message": f"360° sequence complete: {len(captured_files)} photos",
@@ -1512,6 +1556,8 @@ def record_360_video():
 
     except Exception as e:
         print(f"360° video error: {e}")
+        # Stop turntable on error to prevent endless spinning
+        turntable_request('/stop')
         restore_primary_stream()  # Ensure we restore even on error
         return jsonify({"error": str(e)}), 500
 
