@@ -34,8 +34,8 @@ const char* password = WIFI_PASSWORD;
 // === Motor Configuration ===
 const int STEPS_PER_REV = 200;       // 200 steps for full step mode (motor shaft)
 const int MICROSTEPS = 32;           // 1/32 microstepping (M0=M1=M2=HIGH) for smooth motion
-const int GEAR_RATIO = 5;            // 110 teeth ring gear / 22 teeth pinion = 5:1 reduction
-const long TOTAL_STEPS = (long)STEPS_PER_REV * MICROSTEPS * GEAR_RATIO;  // 32000 steps per lazy susan revolution
+const int GEAR_RATIO = 10;           // 160 teeth ring gear / 16 teeth pinion = 10:1 reduction
+const long TOTAL_STEPS = (long)STEPS_PER_REV * MICROSTEPS * GEAR_RATIO;  // 64000 steps per lazy susan revolution
 
 // === Speed Profiles (adjusted for 1/32 microstepping + 5:1 gear ratio) ===
 // Note: With 32x microstepping and 5x gear ratio, we have 160x more steps than direct full-step drive
